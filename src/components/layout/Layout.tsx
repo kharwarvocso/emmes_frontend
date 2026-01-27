@@ -24,4 +24,3 @@ export default async function Layout({ headerStyle = 1, footerStyle = 1, childre
     </LayoutClient>
   );
 }
-

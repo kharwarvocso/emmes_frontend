@@ -75,6 +75,10 @@ export default function LayoutClient({ header1Data, header2Data, footerData, hea
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // useEffect(() => {
+  //   import("@/components/elements/AuthSliderModel/AuthSlider");
+  // }, []);
+
   const handleNavItemClick = (itemId: string, href: string) => {
     setActiveItemId(itemId.toString());
     setIsMobileMenuOpen(false);
@@ -115,10 +119,11 @@ export default function LayoutClient({ header1Data, header2Data, footerData, hea
       )}
       {isSearchModal && <Search handleSearchModal={() => setIsSearchModal(false)} />}
       <main className="h-[600vh]">{children}</main>
-      {footerStyle == 1 && <Footer1 footerData={footerData} />}
-      {isSidebar && <Sidebar isSidebar={isSidebar} handleSidebar={() => setSidebar((pre) => !pre)} />}
+      {/* {footerStyle == 1 && <Footer1 footerData={footerData} />} */}
+      {/* {isSidebar && (
+        <Sidebar isSidebar={isSidebar} handleSidebar={() => setSidebar((pre) => !pre)} />
+      )} */}
       <ScrollToTopButton />
     </>
   );
 }
-

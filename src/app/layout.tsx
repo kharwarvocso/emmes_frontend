@@ -6,8 +6,6 @@ import "./css/humMenu.css";
 import Providers from "@/providers/Providers";
 import { Toaster } from "sonner";
 import { ViewTransitions } from "next-view-transitions";
-import SiteHeader from "@/components/layout/SiteHeader";
-import SiteFooter from "@/components/layout/SiteFooter";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -71,9 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${inter.variable} ${merriWeather.variable} relative scroll-smooth antialiased`}
       >
         <ViewTransitions>
-          <SiteHeader />
           <Providers>{children}</Providers>
-          <SiteFooter />
           <Toaster richColors closeButton position="top-right" />
         </ViewTransitions>
       </body>
