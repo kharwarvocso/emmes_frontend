@@ -4,7 +4,25 @@
             "command": "bunx",
             "args": [
                 "-y",
-                "next-devtools-mcp@latest"
+                "next-devtools-mcp@latest",
+                "https://api.motion.dev/registry.tgz?package=motion-studio-mcp&version=latest"
+            ]
+        },
+        "motion-studio": {
+            "command": "node",
+            "args": [
+                "scripts/motion-studio-mcp-wrapper.mjs"
+            ]
+        },
+        "shadcn-ui": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "-p",
+                "@modelcontextprotocol/sdk@1.24.3",
+                "-p",
+                "@heilgar/shadcn-ui-mcp-server@1.0.6",
+                "shadcn-ui-mcp-server"
             ]
         }
     }
