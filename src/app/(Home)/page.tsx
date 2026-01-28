@@ -1,4 +1,3 @@
-import Wrapper from "@/components/Wrappers";
 import type { Metadata } from "next";
 import Hero from "@/components/landing/Hero";
 import TruthSection from "@/components/landing/TruthSection";
@@ -7,11 +6,8 @@ import StatsSection from "@/components/landing/StatsSection";
 import PartnerSection from "@/components/landing/PartnerSection";
 import LeadershipSection from "@/components/landing/LeadershipSection";
 import SolutionsSection from "@/components/landing/SolutionsSection";
-import Services from "@/components/landing/Services";
-import Features from "@/components/landing/Features";
-import Testimonials from "@/components/landing/Testimonials";
-import Faq, { faqItems } from "@/components/landing/Faq";
-import Contact from "@/components/landing/Contact";
+import CasesSection from "@/components/landing/CasesSection";
+
 import JsonLd from "@/components/seo/JsonLd";
 
 export const revalidate = 0;
@@ -47,7 +43,7 @@ export default function HomePage() {
           url: baseUrl,
         }}
       />
-      <JsonLd
+      {/* <JsonLd
         id="jsonld-faq"
         data={{
           "@context": "https://schema.org",
@@ -57,8 +53,8 @@ export default function HomePage() {
             name: item.q,
             acceptedAnswer: { "@type": "Answer", text: item.a },
           })),
-        }}
-      />
+        }} */}
+      {/* /> */}
 
       <Hero />
       <TruthSection />
@@ -67,14 +63,7 @@ export default function HomePage() {
       <PartnerSection />
       <LeadershipSection />
       <SolutionsSection />
-
-      
-      <Services />
-      <Features />
-      <Testimonials />
-      <Faq />
-      <Contact />
-      <div className="py-10" />
+      <CasesSection />
     </main>
   );
 }
