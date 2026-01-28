@@ -71,7 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${inter.variable} ${merriWeather.variable} relative scroll-smooth antialiased`}
       >
         <ViewTransitions>
-          <SiteHeader />
+          {/* <SiteHeader /> */}
           <Providers>{children}</Providers>
           <SiteFooter />
           <Toaster richColors closeButton position="top-right" />
