@@ -29,7 +29,7 @@ export default function TruthSection() {
               preload="metadata"
               poster="/default/video-placeholder.jpg"
             >
-              <source src="/videos/emmes-intro.mp4" type="video/mp4" />
+              <source src="/default/emmesgroup.mp4" type="video/mp4" />
             </video>
           </div>
         </div>

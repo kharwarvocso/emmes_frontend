@@ -47,12 +47,13 @@ export default function LeadershipSection() {
           </button>
         </div>
 
-        <div className="mt-10">
+        <div className="mt-10 -mr-[max(0px,calc((100vw-100%)/2))]">
           <Slider
             data={leaders}
             uniqueId={sliderId}
             showPagination={false}
             showNavigation={false}
+            className="overflow-visible pr-6"
             externalNavigation={{
               nextEl: ".leadership-next",
               prevEl: ".leadership-prev",
@@ -67,8 +68,9 @@ export default function LeadershipSection() {
               loop: false,
               autoplay: false,
               spaceBetween: 16,
+              slidesOffsetAfter: 24,
             }}
-            swiperClassName="pb-12"
+            swiperClassName="pb-12 !overflow-visible"
             renderItem={(leader) => (
               <article
                 className={`relative flex min-h-[260px] flex-col justify-end overflow-hidden rounded-3xl bg-gradient-to-br ${leader.accent} p-6 text-white sm:min-h-[320px]`}
