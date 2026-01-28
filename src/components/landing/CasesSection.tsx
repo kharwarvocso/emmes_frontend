@@ -65,6 +65,7 @@ export default function CasesSection() {
             uniqueId={sliderId}
             showPagination={false}
             showNavigation={false}
+            className="overflow-visible"
             externalNavigation={{
               nextEl: ".cases-next",
               prevEl: ".cases-prev",
@@ -78,10 +79,10 @@ export default function CasesSection() {
             options={{
               loop: false,
               autoplay: false,
-              spaceBetween: 18,
-              slidesOffsetAfter: 24,
+              spaceBetween: 32,
+              slidesOffsetAfter: 40,
             }}
-            swiperClassName="pb-14"
+            swiperClassName="pb-14 !overflow-visible"
             renderItem={(card) => (
               <article
                 className={cn(
