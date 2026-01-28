@@ -79,37 +79,36 @@ export default function CasesSection() {
             options={{
               loop: false,
               autoplay: false,
-              spaceBetween: 32,
-              slidesOffsetAfter: 40,
+              spaceBetween: 52,
+              slidesOffsetAfter: 60,
             }}
             swiperClassName="pb-14 !overflow-visible"
             renderItem={(card) => (
-              <article
-                className={cn(
-                  "group relative flex min-h-[300px] items-end overflow-hidden rounded-3xl p-6 text-white transition-transform duration-300",
-                  card.bg,
-                  card.featured && "hover:scale-[1.03] hover:z-10",
-                )}
-              >
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,0.35))]" />
-                <span className="absolute left-6 top-6 rounded-full bg-[#4f6fdc] px-4 py-1 text-xs font-semibold">
-                  {card.tag}
-                </span>
+              <div className="group relative h-[340px]">
+                <article
+                  className={cn(
+                    "absolute left-0 top-0 flex h-[340px] w-[280px] items-end overflow-hidden rounded-3xl p-6 text-white transition-[height,width] duration-300 group-hover:h-[450px] group-hover:w-[360px] group-hover:z-10 sm:w-[320px] sm:group-hover:w-[400px] lg:w-[520px] lg:group-hover:w-[550px]",
+                    card.bg,
+                  )}
+                >
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,0.35))]" />
+                  <span className="absolute left-6 top-6 rounded-full bg-[#4f6fdc] px-4 py-1 text-xs font-semibold">
+                    {card.tag}
+                  </span>
 
-                <div className="relative w-full">
-                  <div className="flex items-end justify-between gap-6">
-                    <div>
-                      <p className="text-lg font-semibold">{card.title}</p>
-                      {card.featured && (
+                  <div className="relative w-full">
+                    <div className="flex items-end justify-between gap-6">
+                      <div>
+                        <p className="text-lg font-semibold">{card.title}</p>
                         <p className="mt-2 max-w-sm text-sm text-white/90 opacity-0 transition duration-300 group-hover:opacity-100">
-                          {card.description}
+                          {card.description || " "}
                         </p>
-                      )}
+                      </div>
+                      <ArrowCircle />
                     </div>
-                    <ArrowCircle />
                   </div>
-                </div>
-              </article>
+                </article>
+              </div>
             )}
           />
 
