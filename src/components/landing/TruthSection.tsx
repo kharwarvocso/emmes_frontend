@@ -21,7 +21,7 @@ export default function TruthSection() {
         <div className="mt-12">
           <div className="relative overflow-hidden rounded-3xl bg-[#f5f2ef] shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
             <video
-              className="h-[240px] w-full object-cover sm:h-[320px] md:h-[380px]"
+              className="h-[300px] w-full object-cover sm:h-[380px] md:h-[520px]"
               autoPlay
               muted
               loop
