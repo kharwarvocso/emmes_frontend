@@ -100,9 +100,9 @@ export default function SiteHeader() {
                     </Link>
                   ))}
                   <div className="my-2 h-px bg-slate-200" />
-                  {primaryNavItems.map((item) => (
+                  {primaryNavItems.map((item, index) => (
                     <Link
-                      key={item.href}
+                      key={item.id ?? index}
                       href={item.href}
                       className="rounded-md px-3 py-2 hover:bg-slate-50"
                     >
@@ -117,9 +117,9 @@ export default function SiteHeader() {
           <div className="flex items-center justify-between">
             <Logo mode="light" className="h-10 md:h-12" src={logoUrl} />
             <nav className="emmes-nav-primary hidden items-center justify-end gap-8 pb-2 lg:flex">
-              {primaryNavItems.map((item) => (
+              {primaryNavItems.map((item, index) => (
                 <Link
-                  key={item.href}
+                  key={item.id ?? index}
                   href={item.href}
                   className="emmes-nav-primary-link"
                 >

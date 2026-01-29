@@ -8,6 +8,9 @@ import { Toaster } from "sonner";
 import { ViewTransitions } from "next-view-transitions";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
+import { Env } from "@/lib/Env";
+import { QueryClient } from "@tanstack/react-query";
+import { fetchSiteConfig } from "@/hooks/useSiteConfig";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -38,27 +41,32 @@ const metadataBase = (() => {
 })();
 
 export async function generateMetadata(): Promise<Metadata> {
+  const queryClient = new QueryClient();
   try {
-    const res = await fetch("http://localhost:1337/api/site-config?populate=*", {
-      next: { revalidate: 60 } // Revalidate every minute
+    const data = await queryClient.fetchQuery({
+      queryKey: ["siteConfig"],
+      queryFn: fetchSiteConfig,
+      staleTime: 1000 * 60, // 1 minute cache
     });
 
-    if (!res.ok) throw new Error("Failed to fetch site config");
-
-    const { data } = await res.json();
     const { site_name, meta_title, meta_description, og_image, favicon } = data || {};
 
     const title = meta_title || site_name || "TheEmmesGroup";
     const description = meta_description || "Fraud prevention, cyber threat protection, and security solutions.";
-    // Helper to resolve URL manually as hook is client-side, but logic is simple
+
+    // Helper to resolve URL
+    // Since we are using fetchSiteConfig (axios), result URLs might be relative.
+    const backendUrl = Env.NEXT_PUBLIC_BACKEND_BASE_URL;
     const resolveUrl = (url?: string) => {
       if (!url) return undefined;
       if (url.startsWith("http")) return url;
-      return `http://localhost:1337${url}`;
+      // Remove trailing slash from base if present to avoid double slash
+      const cleanBase = backendUrl.replace(/\/+$/, "");
+      return `${cleanBase}${url}`;
     };
 
     return {
-      metadataBase: new URL("http://localhost:3000"), // Default base
+      metadataBase: new URL(Env.NEXT_PUBLIC_FRONTEND_BASE_URL),
       title: {
         default: title,
         template: `%s | ${site_name || "TheEmmesGroup"}`,

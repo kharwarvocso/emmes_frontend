@@ -24,7 +24,7 @@ export interface SiteConfig {
     og_image?: MediaFile;
 }
 
-const fetchSiteConfig = async (): Promise<SiteConfig | null> => {
+export const fetchSiteConfig = async (): Promise<SiteConfig | null> => {
     try {
         const { data } = await apiClient.get<SiteConfig>("/api/site-config", {
             params: {
