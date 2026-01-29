@@ -1,8 +1,8 @@
+"use client";
 import React from "react";
 import ReactQueryProvider from "./QueryProvider";
 import WebThemeProvider from "./WebThemeProvider";
-import MotionProvider from "./MotionProvider";
-import Layout from "@/components/layout/Layout";
+import MotionProvider from "./MotionProviders";
 import CartModeBridge from "@/components/cart/CartModeBridge";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -10,8 +10,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <ReactQueryProvider>
       <MotionProvider>
         <WebThemeProvider>
-            <CartModeBridge />
-            <Layout>{children}</Layout>
+          <CartModeBridge />
+          {children}
         </WebThemeProvider>
       </MotionProvider>
     </ReactQueryProvider>

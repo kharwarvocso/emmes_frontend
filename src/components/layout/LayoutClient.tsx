@@ -2,18 +2,25 @@
 import { useEffect, useRef, useState } from "react";
 import Search from "./Search";
 import Sidebar from "./Sidebar";
-import Footer1 from "./footer/Footer1";
-import Header1 from "./header/Header1/Header1";
+import Footer from "./header/Footer";
+import Header from "./header/Header";
 import ScrollToTopButton from "../ScrollToTopButton";
 import { usePathname, useRouter } from "next/navigation";
-import Header2 from "./header/Header2/Header2";
 
-export default function LayoutClient({ header1Data, header2Data, footerData, headerStyle = 1, footerStyle = 1, children }: any) {
-  const upperNavItems = header1Data?.upperNav;
-  const middleNavItems = header1Data?.middleNav;
-  const lowerNavItems = header1Data?.lowerNav;
+export default function LayoutClient({
+  header1Data,
+  header2Data,
+  footerData,
+  headerStyle = 1,
+  footerStyle = 1,
+  children,
+}: any) {
+  const upperNavItems = header1Data?.upperNav ?? [];
+  const middleNavItems = header1Data?.middleNav ?? [];
+  const lowerNavItems = header1Data?.lowerNav ?? [];
 
-  const upperNavItems2 = header2Data?.upperNav;
+  const upperNavItems2 = header2Data?.upperNav ?? upperNavItems;
+
   // Mobile Menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [show, setShow] = useState<string>("translate-y-0");
@@ -26,8 +33,7 @@ export default function LayoutClient({ header1Data, header2Data, footerData, hea
   const router = useRouter();
 
   const [isSidebar, setSidebar] = useState(false);
-
-  const [isSearchModal, setIsSearchModal] = useState<Boolean>(false);
+  const [isSearchModal, setIsSearchModal] = useState<boolean>(false);
 
   const controlNavbar = () => {
     if (typeof window === "undefined") return;
@@ -49,14 +55,19 @@ export default function LayoutClient({ header1Data, header2Data, footerData, hea
     return `/${urlSegments[1]}`;
   };
   useEffect(() => {
-    const activeItem =
-      upperNavItems.find((item: any) => item.href === getBasePath(pathname)) ||
-      upperNavItems.find((item: any) => item.subNav?.some((subItem: { href: string }) => subItem.href === getBasePath(pathname)));
-    if (activeItem) {
-      setActiveItemId(activeItem.id.toString());
-    } else {
+    if (!upperNavItems.length) {
       setActiveItemId(null);
+      return;
     }
+
+    const basePath = getBasePath(pathname);
+    const activeItem =
+      upperNavItems.find((item: any) => item.href === basePath) ||
+      upperNavItems.find((item: any) =>
+        item.subNav?.some((subItem: { href: string }) => subItem.href === basePath),
+      );
+
+    setActiveItemId(activeItem ? activeItem.id.toString() : null);
   }, [pathname, upperNavItems]);
 
   useEffect(() => {
@@ -79,19 +90,25 @@ export default function LayoutClient({ header1Data, header2Data, footerData, hea
   //   import("@/components/elements/AuthSliderModel/AuthSlider");
   // }, []);
 
-  const handleNavItemClick = (itemId: string, href: string) => {
-    setActiveItemId(itemId.toString());
+  const toggleMobileMenu = () => setIsMobileMenuOpen((pre) => !pre);
+  const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
     isMobileMenuOpenRef.current = false;
-    router.push(href);
+  };
+
+  const handleNavItemClick = (itemId: string, href: string) => {
+    setActiveItemId(itemId.toString());
+    closeMobileMenu();
+    if (href) router.push(href);
   };
 
   return (
     <>
       {headerStyle == 1 && (
-        <Header1
+        <Header
           show={show}
-          handleMobileMenu={() => setIsMobileMenuOpen((pre) => !pre)}
+          handleMobileMenu={toggleMobileMenu}
+          closeMobileMenu={closeMobileMenu}
           isMobileMenuOpen={isMobileMenuOpen}
           upperNavItems={upperNavItems}
           middleNavItems={middleNavItems}
@@ -100,29 +117,27 @@ export default function LayoutClient({ header1Data, header2Data, footerData, hea
           handleNavItemClick={handleNavItemClick}
           handleSearchModal={() => setIsSearchModal((pre) => !pre)}
           handleSidebar={() => setSidebar((pre) => !pre)}
-          handleLogout={() => {}}
         />
       )}
       {headerStyle == 2 && (
-        <Header2
+        <Header
           show={show}
-          handleMobileMenu={() => setIsMobileMenuOpen((pre) => !pre)}
+          handleMobileMenu={toggleMobileMenu}
+          closeMobileMenu={closeMobileMenu}
           isMobileMenuOpen={isMobileMenuOpen}
           upperNavItems={upperNavItems2}
+          middleNavItems={middleNavItems}
           lowerNavItems={lowerNavItems}
           activeItemId={activeItemId}
           handleNavItemClick={handleNavItemClick}
           handleSearchModal={() => setIsSearchModal((pre) => !pre)}
           handleSidebar={() => setSidebar((pre) => !pre)}
-          handleLogout={() => {}}
         />
       )}
       {isSearchModal && <Search handleSearchModal={() => setIsSearchModal(false)} />}
-      <main className="h-[600vh]">{children}</main>
-      {/* {footerStyle == 1 && <Footer1 footerData={footerData} />} */}
-      {/* {isSidebar && (
-        <Sidebar isSidebar={isSidebar} handleSidebar={() => setSidebar((pre) => !pre)} />
-      )} */}
+      <main className="min-h-screen">{children}</main>
+      {footerStyle == 1 && <Footer footerData={footerData} />}
+      {isSidebar && <Sidebar isSidebar={isSidebar} handleSidebar={() => setSidebar((pre) => !pre)} />}
       <ScrollToTopButton />
     </>
   );

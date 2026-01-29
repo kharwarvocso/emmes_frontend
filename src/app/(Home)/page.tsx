@@ -3,7 +3,7 @@ import React from "react";
 import { Metadata } from "next";
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
 import { fetchHomepageData, homepageQueryOptions } from "./query";
-import PageRenderer from "../sections/PageRenderer";
+import PageRenderer from "../_common/PageRenderer";
 
 export const revalidate = 0;
 

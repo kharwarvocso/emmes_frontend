@@ -1,18 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { ThemeProvider } from "next-themes";
+
+import { useEffect } from "react";
 
 export default function WebThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
-    setMounted(true);
+    if (typeof document === "undefined") return;
+    document.documentElement.dataset.theme = "light";
   }, []);
 
-  if (!mounted) return null;
-  return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
-      {children}
-    </ThemeProvider>
-  );
+  return <>{children}</>;
 }

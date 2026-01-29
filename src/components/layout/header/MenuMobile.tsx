@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import Link from "next/link";
 import { IoIosArrowDown } from "react-icons/io";
@@ -12,13 +13,13 @@ interface NavItem {
 
 interface MenuMobileProps {
   navItemsArray: NavItem[];
-  setIsMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: () => void;
   activeItemId: string | null;
 }
 
 const MenuMobile: React.FC<MenuMobileProps> = ({
   navItemsArray,
-  setIsMobileMenuOpen,
+  onClose,
   activeItemId,
 }) => {
   return (
@@ -27,7 +28,7 @@ const MenuMobile: React.FC<MenuMobileProps> = ({
         <SingleNavItem
           key={item.id}
           item={item}
-          setIsMobileMenuOpen={setIsMobileMenuOpen}
+          onClose={onClose}
           activeItemId={activeItemId}
         />
       ))}
@@ -37,13 +38,13 @@ const MenuMobile: React.FC<MenuMobileProps> = ({
 
 interface SingleNavItemProps {
   item: NavItem;
-  setIsMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: () => void;
   activeItemId: string | null;
 }
 
 const SingleNavItem: React.FC<SingleNavItemProps> = ({
   item,
-  setIsMobileMenuOpen,
+  onClose,
   activeItemId,
 }) => {
   const [isItemOpen, setItemOpen] = useState(false);
@@ -62,7 +63,7 @@ const SingleNavItem: React.FC<SingleNavItemProps> = ({
               activeItemId === item.id.toString() ? "text-bg1" : "text-black"
             }`}
             onClick={() => {
-              setIsMobileMenuOpen(false);
+              onClose();
             }}
           >
             {item.label}
@@ -74,7 +75,7 @@ const SingleNavItem: React.FC<SingleNavItemProps> = ({
                 if (item.subNav && item.subNav.length > 0) {
                   toggleItem();
                 } else {
-                  setIsMobileMenuOpen(false); // Close the menu if there are no subnav items
+                  onClose(); // Close the menu if there are no subnav items
                 }
               }}
             />
@@ -88,7 +89,7 @@ const SingleNavItem: React.FC<SingleNavItemProps> = ({
                 key={index}
                 href={subItem.href ?? "#"}
                 onClick={() => {
-                  setIsMobileMenuOpen(false); // Close the menu when a subnav item is clicked
+                  onClose(); // Close the menu when a subnav item is clicked
                 }}
                 className={`hover:bg-bg1 flex cursor-pointer items-center border-b border-zinc-200 py-2 pl-5 capitalize transition-colors hover:text-white ${
                   activeItemId === subItem.id.toString()

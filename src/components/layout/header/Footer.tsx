@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import { FaFacebook, FaLinkedinIn } from "react-icons/fa";
@@ -11,7 +12,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import TextWithLineBreak from "@/components/TextWithLineBreak";
 import Logo from "@/components/Logo";
 
-export default function Footer1({ footerData }: any) {
+export default function Footer({ footerData }: any) {
   return (
     <Wrapper as="footer" containerClassName="w-full" className="pt-5 md:pt-12" bgColor="bg-bg1">
       {/* Footer links section  */}
@@ -48,7 +49,7 @@ export default function Footer1({ footerData }: any) {
             </p>
             <p>
               <Link href={`mailto:${footerData?.contactDetails?.email}`} className="flex items-center gap-2">
-                <MdOutlineEmail className="text-xl" /> {footerData?.contactDetails.email}
+                <MdOutlineEmail className="text-xl" /> {footerData?.contactDetails?.email}
               </Link>
             </p>
             <h4 className="my-2 text-2xl font-semibold">Location</h4>

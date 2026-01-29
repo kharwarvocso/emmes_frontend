@@ -1,83 +1,38 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { getProduct, getRelatedProducts } from "../query";
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import Wrapper from "@/components/Wrappers";
-import PageRenderer from "@/app/sections/PageRenderer";
 
 interface ProductPageProps {
-  params: Promise<{ slug: string; filters?: string[] }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  params: { slug: string };
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = params;
+  const base =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.NEXT_PUBLIC_FRONTEND_BASE_URL ||
+    "http://localhost:3000";
 
-  try {
-    const product = await getProduct(slug);
-    if (!product) {
-      return {
-        title: "Product Not Found",
-        description: "The requested product could not be found.",
-      };
-    }
-
-    const { seo } = product;
-    const brandName = typeof product.brand === "object" && product.brand
-      ? product.brand.name
-      : (product as any).brand; // if you ever mapped brand to string elsewhere
-
-    const images = (product.media?.map((m) => m.image?.url).filter(Boolean) || []) as string[];
-
-    const title = seo?.title || `${product.title} | Your Store`;
-    const description = seo?.description || product.shortDescription || undefined;
-
-    return {
-      title,
-      description,
-      keywords:
-        seo?.keywords ||
-        [brandName, product.title, ...(product.categories?.map((c) => c.name) || [])]
-          .filter(Boolean)
-          .join(", "),
-      openGraph: {
-        title: seo?.ogTitle || product.title,
-        description: seo?.ogDescription || product.shortDescription || description,
-        images: seo?.ogImage ? [seo.ogImage] : images.slice(0, 4),
-        type: "website",
-        url: `${process.env.NEXT_PUBLIC_BASE_URL}/products/${product.slug}`,
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: seo?.twitterTitle || product.title,
-        description: seo?.twitterDescription || product.shortDescription || description,
-        images: seo?.twitterImage ? [seo.twitterImage] : images[0] ? [images[0]] : [],
-      },
-      alternates: {
-        canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/products/${product.slug}`,
-      },
-      robots: {
-        index: Boolean(product.publishedAt),
-        follow: true,
-      },
-    };
-  } catch {
-    return {
-      title: "Product Not Found",
-      description: "The requested product could not be found.",
-    };
-  }
+  return {
+    title: `${slug} | Product`,
+    description: "Product detail page placeholder.",
+    alternates: {
+      canonical: `${base}/products/${slug}`,
+    },
+  };
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const { slug } = await params;
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(homepageQueryOptions);
+  const { slug } = params;
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <Wrapper as="main" isTop className="h-[200vh]">
-        <PageRenderer />
-      </Wrapper>
-    </HydrationBoundary>
+    <Wrapper as="main" isTop className="min-h-[60vh]">
+      <div className="rounded-lg border border-zinc-200 bg-white p-6">
+        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Product</p>
+        <h1 className="mt-2 text-2xl font-semibold text-zinc-900">{slug}</h1>
+        <p className="mt-2 text-sm text-zinc-600">
+          This page is a starter template. Connect it to Strapi to render real product data.
+        </p>
+      </div>
+    </Wrapper>
+  );
 }

@@ -1,7 +1,8 @@
+"use client";
 import { IoSearchOutline } from "react-icons/io5";
 import { Fragment } from "react";
 import Menu from "./Menu";
-import MenuMobile from "../MenuMobile";
+import MenuMobile from "./MenuMobile";
 import AuthButton from "./AuthButton";
 import CartButton from "@/components/layout/header/CartButton";
 import Logo from "@/components/Logo";
@@ -10,6 +11,7 @@ import GlobalSearch from "@/components/globalSearch/GlobalSearch";
 export default function Header({
   show,
   handleMobileMenu,
+  closeMobileMenu,
   isMobileMenuOpen,
   upperNavItems,
   middleNavItems,
@@ -19,18 +21,22 @@ export default function Header({
   handleSearchModal,
   handleSidebar,
 }: any) {
+  const safeUpperNav = upperNavItems ?? [];
+  const safeMiddleNav = middleNavItems ?? [];
+  const safeLowerNav = lowerNavItems ?? [];
+
   return (
     <header className={`bg-primary-50 fixed top-0 z-50 w-full transition-transform duration-300 md:h-20 ${show}`}>
       {/* Desktop Section */}
       {/* Upper Nav  */}
       <Wrapper bgColor="bg-primary" as="nav" className="item-center flex w-full gap-2 py-1.5 text-xs text-white max-md:hidden">
-        {upperNavItems?.map((item: any, index: number) => (
+        {safeUpperNav.map((item: any, index: number) => (
           <Fragment key={item.id}>
             <a href={item.url} className="flex items-center gap-1 hover:underline">
               <span>{item.icon}</span>
               <span>{item.label}</span>
             </a>
-            {index < middleNavItems.length && <span className="mx-2">|</span>}
+            {index < safeUpperNav.length - 1 && <span className="mx-2">|</span>}
           </Fragment>
         ))}
       </Wrapper>
@@ -41,7 +47,7 @@ export default function Header({
         <GlobalSearch />
         <div className="flex items-center gap-2 md:gap-4">
           <ul className="hidden items-center gap-x-5 font-medium md:flex">
-            <Menu navItemsArray={middleNavItems} activeItemId={activeItemId} onItemClick={handleNavItemClick} />
+            <Menu navItemsArray={safeMiddleNav} activeItemId={activeItemId} onItemClick={handleNavItemClick} />
           </ul>
           <CartButton />
           <AuthButton />
@@ -50,7 +56,7 @@ export default function Header({
       {/* Lower Nav  */}
       <Wrapper bgColor="bg-white" containerClassName="border-b border-t border-zinc-200" className="max-md:hidden">
         <ul className="text- hidden items-center gap-x-2 font-medium md:flex">
-          <Menu navItemsArray={lowerNavItems} activeItemId={activeItemId} onItemClick={handleNavItemClick} />
+          <Menu navItemsArray={safeLowerNav} activeItemId={activeItemId} onItemClick={handleNavItemClick} />
         </ul>
       </Wrapper>
       {/* -------------------------------------  */}
@@ -71,8 +77,8 @@ export default function Header({
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="absolute top-14 left-0 w-full md:hidden">
-          <MenuMobile navItemsArray={upperNavItems} setIsMobileMenuOpen={handleMobileMenu} activeItemId={activeItemId} />
-          <MenuMobile navItemsArray={lowerNavItems} setIsMobileMenuOpen={handleMobileMenu} activeItemId={activeItemId} />
+          <MenuMobile navItemsArray={safeUpperNav} onClose={closeMobileMenu} activeItemId={activeItemId} />
+          <MenuMobile navItemsArray={safeLowerNav} onClose={closeMobileMenu} activeItemId={activeItemId} />
         </div>
       )}
     </header>

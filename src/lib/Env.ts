@@ -13,9 +13,9 @@ export const Env = createEnv({
     AUTH_REQUIRE_STRAPI_SYNC: z.enum(["true", "false"]).default("false"),
   },
   client: {
-    NEXT_PUBLIC_FRONTEND_BASE_URL: z.url(),
-    NEXT_PUBLIC_BACKEND_BASE_URL: z.url(),
-    NEXT_PUBLIC_STRAPI_READONLY_TOKEN: z.string(),
+    NEXT_PUBLIC_FRONTEND_BASE_URL: z.url().default("http://localhost:3000"),
+    NEXT_PUBLIC_BACKEND_BASE_URL: z.url().default("http://localhost:1337"),
+    NEXT_PUBLIC_STRAPI_READONLY_TOKEN: z.string().min(1).optional(),
     // Optional: nothing else yet
   },
   experimental__runtimeEnv: {
