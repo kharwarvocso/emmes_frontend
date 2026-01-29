@@ -37,32 +37,51 @@ const metadataBase = (() => {
   }
 })();
 
-export const metadata: Metadata = {
-  metadataBase,
-  title: {
-    default: "TheEmmesGroup",
-    template: "%s | TheEmmesGroup",
-  },
-  description:
-    "Fraud prevention, cyber threat protection, and security solutions for individuals and businesses.",
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: "TheEmmesGroup",
-    type: "website",
-    locale: "en_US",
-    siteName: "TheEmmesGroup",
-    description:
-      "Fraud prevention, cyber threat protection, and security solutions for individuals and businesses.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "TheEmmesGroup",
-    description:
-      "Fraud prevention, cyber threat protection, and security solutions for individuals and businesses.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const res = await fetch("http://localhost:1337/api/site-config?populate=*", {
+      next: { revalidate: 60 } // Revalidate every minute
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch site config");
+
+    const { data } = await res.json();
+    const { site_name, meta_title, meta_description, og_image, favicon } = data || {};
+
+    const title = meta_title || site_name || "TheEmmesGroup";
+    const description = meta_description || "Fraud prevention, cyber threat protection, and security solutions.";
+    // Helper to resolve URL manually as hook is client-side, but logic is simple
+    const resolveUrl = (url?: string) => {
+      if (!url) return undefined;
+      if (url.startsWith("http")) return url;
+      return `http://localhost:1337${url}`;
+    };
+
+    return {
+      metadataBase: new URL("http://localhost:3000"), // Default base
+      title: {
+        default: title,
+        template: `%s | ${site_name || "TheEmmesGroup"}`,
+      },
+      description,
+      openGraph: {
+        title,
+        description,
+        siteName: site_name,
+        images: og_image?.url ? [resolveUrl(og_image.url)!] : [],
+      },
+      icons: {
+        icon: favicon?.url ? resolveUrl(favicon.url) : "/favicon.ico",
+      },
+    };
+  } catch (error) {
+    console.error("SEO Fetch Error:", error);
+    return {
+      title: "TheEmmesGroup",
+      description: "Default description",
+    };
+  }
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -71,13 +90,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${inter.variable} ${merriWeather.variable} relative scroll-smooth antialiased overflow-x-hidden `}
       >
         <ViewTransitions>
-          {/* <SiteHeader /> */}
-          <Providers>{children}</Providers>
-          <SiteFooter />
+          <Providers>
+            {/* <SiteHeader /> */}
+            {children}
+            <SiteFooter />
+          </Providers>
           <Toaster richColors closeButton position="top-right" />
         </ViewTransitions>
       </body>
     </html>
   );
 }
-

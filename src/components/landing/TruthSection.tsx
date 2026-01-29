@@ -1,4 +1,5 @@
 import Wrapper from "@/components/Wrappers";
+import TruthVideoScroll from "@/components/landing/TruthVideoScroll";
 
 export default function TruthSection() {
   return (
@@ -18,22 +19,13 @@ export default function TruthSection() {
           </h2>
         </div>
 
-        <div className="mt-12">
-          <div className="relative overflow-hidden rounded-3xl bg-[#f5f2ef] shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
-            <video
-              className="h-[300px] w-full object-cover sm:h-[380px] md:h-[520px]"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              poster="/default/video-placeholder.jpg"
-            >
-              <source src="/default/emmesgroup.mp4" type="video/mp4" />
-            </video>
-          </div>
-        </div>
       </Wrapper>
+        <div className="mt-12">
+          <TruthVideoScroll />
+        </div>
     </section>
   );
 }
+
+
+

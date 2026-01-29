@@ -6,11 +6,13 @@ import { cn } from "@/lib/utils";
 export default function Logo({
   mode = "dark",
   className,
+  src,
 }: {
   mode?: "light" | "dark";
   className?: string;
+  src?: string;
 }) {
-  const logoSrc = "/default/emmes-group-logo_white.png";
+  const logoSrc = src || "/default/emmes-group-logo_white.png";
   return (
     <Link href="/" className="flex cursor-pointer items-center gap-2">
       <Image

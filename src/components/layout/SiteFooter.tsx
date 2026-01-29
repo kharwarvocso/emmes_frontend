@@ -1,14 +1,14 @@
+"use client";
+
 import Wrapper from "@/components/Wrappers";
 import { HiArrowLongRight } from "react-icons/hi2";
 import { RiLinkedinFill, RiTwitterXLine } from "react-icons/ri";
-
-const quickLinks = [
-  ["History", "Leadership", "Clients and Collaborators", "By the Numbers"],
-  ["Tech & AI", "CRO Services", "Resource Center"],
-  ["Careers", "Contact Us", "Locations"],
-];
+import { useNavigation } from "@/hooks/useNavigation";
+import Link from "next/link"; // Ensure Link is imported
 
 export default function SiteFooter() {
+  const { data: footerColumns = [] } = useNavigation('footer');
+
   return (
     <footer className="bg-[#d7dccb] text-[#1d3173] rounded-t-4xl">
       <Wrapper as="div" className="pt-16 md:pt-20">
@@ -63,10 +63,25 @@ export default function SiteFooter() {
                   <HiArrowLongRight className="h-5 w-5" aria-hidden="true" />
                 </div>
                 <div className="grid gap-6 text-sm text-[#2a3f7a]/80 sm:grid-cols-3">
-                  {quickLinks.map((column, index) => (
-                    <div key={`footer-col-${index}`} className="space-y-2">
-                      {column.map((link) => (
-                        <p key={link}>{link}</p>
+                  {footerColumns.map((column) => (
+                    <div key={column.id} className="space-y-2">
+                      {/* Column Header handled conceptually or hidden if empty path? 
+                           Based on design, the top level items (Company, etc) might be headers?
+                           Or simpler: existing design just listed links. 
+                           If 'Company' is a header, we might want to display it or just its children?
+                           The original code: 
+                           ["History", "Leadership", ...] -> simply links.
+                           The API: "Company" (header) -> children: "History", "Leadership".
+                           If we show the children, it matches the design.
+                       */}
+                      {column.items && column.items.map((link) => (
+                        <Link
+                          key={link.id}
+                          href={link.href}
+                          className="block hover:text-[#0b66ff] transition-colors"
+                        >
+                          {link.label}
+                        </Link>
                       ))}
                     </div>
                   ))}
@@ -74,6 +89,7 @@ export default function SiteFooter() {
               </div>
             </div>
           </div>
+
 
           <div className="pt-6">
             <div className="flex flex-col gap-4 text-xs text-[#2a3f7a]/80 md:flex-row md:items-center md:justify-between">
