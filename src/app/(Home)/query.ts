@@ -31,7 +31,26 @@ export const fetchHomepageData = async () => {
                 populate: "*",
               },
               "section.hero-section": {
-                populate: "*",
+                populate: {
+                  button: {
+                    populate: "*",
+                  },
+                  cards: {
+                    populate: {
+                      icon: true,
+                      blog: {
+                        populate: {
+                          coverImage: true,
+                        },
+                      },
+                      our_brand: {
+                        populate: {
+                          coverImage: true,
+                        },
+                      },
+                    },
+                  },
+                },
               },
               "section.case-study": {
                 populate: "*",

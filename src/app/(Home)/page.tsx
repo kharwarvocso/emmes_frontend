@@ -57,6 +57,7 @@ import PartnerSection from "@/components/landing/PartnerSection";
 import LeadershipSection from "@/components/landing/LeadershipSection";
 import SolutionsSection from "@/components/landing/SolutionsSection";
 import CasesSection from "@/components/landing/CasesSection";
+import { fetchHomepageData } from "./query";
 
 // import JsonLd from "@/components/seo/JsonLd";
 
@@ -67,7 +68,15 @@ export const metadata: Metadata = {
   description: "TheEmmesGroup",
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const homepageData = await fetchHomepageData();
+  const page = homepageData?.data?.[0];
+
+  const heroSection = page?.hero_section?.find(
+    (section: { __component?: string }) =>
+      section?.__component === "section.hero-section",
+  );
+  console.log("page data show ishere",heroSection);
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_FRONTEND_BASE_URL ||
@@ -106,7 +115,7 @@ export default function HomePage() {
         }} */}
       {/* /> */}
 
-      <Hero />
+      <Hero section={heroSection} />
       <TruthSection />
       <ResourceCenter />
       <StatsSection />

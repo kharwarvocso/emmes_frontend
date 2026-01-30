@@ -1,6 +1,43 @@
+import Image from "next/image";
+import Link from "next/link";
 import Wrapper from "@/components/Wrappers";
 import SiteHeader from "@/components/layout/SiteHeader";
 import HeroCard from "@/components/landing/HeroCard";
+import { getImageUrl } from "@/hooks/useSiteConfig";
+
+type HeroCardContent = {
+  id?: number;
+  priority?: number;
+  is_hidden?: boolean;
+  title?: string;
+  description?: string;
+  ctaLabel?: string;
+  cta_label?: string;
+  blog?: {
+    slug?: string;
+    coverImage?: { url?: string } | { data?: { url?: string } };
+  } | Array<{ slug?: string; coverImage?: { url?: string } | { data?: { url?: string } } }> | null;
+  our_brand?: {
+    slug?: string;
+    coverImage?: { url?: string } | { data?: { url?: string } };
+  } | Array<{ slug?: string; coverImage?: { url?: string } | { data?: { url?: string } } }> | null;
+  icon?: string | { url?: string } | { data?: { url?: string } } | null;
+};
+
+type HeroSectionContent = {
+  heading?: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  cards?: HeroCardContent[];
+  button?: {
+    name?: string;
+    link?: string;
+    icon?: string | { url?: string };
+    icon_position?: string;
+    // iconName?: string;
+  };
+};
 
 function EmmesMark() {
   return (
@@ -58,7 +95,72 @@ function VeridixMark() {
   );
 }
 
-export default function Hero() {
+
+const defaultHeading =
+  "Delivering Global Health Impact Through People, Science and Technology";
+
+const defaultCards: HeroCardContent[] = [
+  {
+    title: "Emmes",
+    description:
+      "Founded as Emmes more than 47 years ago, Emmes Group has grown",
+    ctaLabel: "Explore Emmes",
+  },
+  {
+    title: "Veridix",
+    description:
+      "Transforming clinical development with intelligent, connected systems",
+    ctaLabel: "Explore Veridix",
+  },
+];
+
+export default function Hero({ section }: { section?: HeroSectionContent }) {
+  const sectionTitle =
+    section?.title || section?.heading || defaultHeading;
+  const subtitle = section?.subtitle;
+  const description = section?.description;
+  const button = section?.button;
+  const buttonLabel = button?.name;
+  const buttonHref = button?.link;
+  const buttonIconPosition = button?.icon_position === "left" ? "left" : "right";
+  const buttonIconUrl =
+    typeof button?.icon === "string"
+      ? getImageUrl(button.icon)
+      : getImageUrl(button?.icon?.url);
+
+  const rawCards = Array.isArray(section?.cards) ? section?.cards : [];
+  const visibleCards = rawCards
+    .filter((card) => !card?.is_hidden)
+    .sort(
+      (a, b) =>
+        (a?.priority ?? Number.MAX_SAFE_INTEGER) -
+        (b?.priority ?? Number.MAX_SAFE_INTEGER),
+    );
+  const resolvedCards = visibleCards.length > 0 ? visibleCards : defaultCards;
+
+  const getSlug = (
+    value?: { slug?: string } | Array<{ slug?: string }> | null,
+  ) => {
+    if (!value) return undefined;
+    if (Array.isArray(value)) return value[0]?.slug;
+    return value.slug;
+  };
+  const getCoverUrl = (
+    value?:
+      | { coverImage?: { url?: string } | { data?: { url?: string } } }
+      | Array<{ coverImage?: { url?: string } | { data?: { url?: string } } }>
+      | null,
+  ) => {
+    if (!value) return undefined;
+    const item = Array.isArray(value) ? value[0] : value;
+    const cover = item?.coverImage;
+    return getImageUrl(
+      typeof cover === "string"
+        ? cover
+        : cover?.url || cover?.data?.url,
+    );
+  };
+
   return (
     <Wrapper
       as="section"
@@ -74,35 +176,124 @@ export default function Hero() {
 
       <div className="mx-auto w-full max-w-screen-xl px-3 py-16 text-white xl:px-5 md:py-20">
         <div className="mx-auto max-w-6xl text-center">
-            <h1 className="emmes-heading">
-              Delivering Global Health Impact Through People, Science and
-              Technology
-            </h1>
-          </div>
+          {subtitle ? (
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-white/70">
+              {subtitle}
+            </p>
+          ) : null}
+          <h1 className="emmes-heading">{sectionTitle}</h1>
+          {description ? (
+            <p className="mt-4 text-base text-white/85">{description}</p>
+          ) : null}
+          {buttonLabel && buttonHref ? (
+            <div className="mt-6 flex justify-center">
+              <Link
+                href={buttonHref}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#1d3173] transition hover:bg-white/90"
+              >
+                {buttonIconUrl && buttonIconPosition === "left" ? (
+                  <Image
+                    src={buttonIconUrl}
+                    alt=""
+                    width={16}
+                    height={16}
+                    className="h-4 w-4"
+                    aria-hidden="true"
+                    unoptimized
+                  />
+                ) : null}
+                {buttonLabel}
+                {buttonIconUrl && buttonIconPosition === "right" ? (
+                  <Image
+                    src={buttonIconUrl}
+                    alt=""
+                    width={16}
+                    height={16}
+                    className="h-4 w-4"
+                    aria-hidden="true"
+                    unoptimized
+                  />
+                ) : null}
+              </Link>
+            </div>
+          ) : null}
+        </div>
 
         <div className="max-w-screen-xl mx-auto mt-10 grid gap-6 md:grid-cols-2">
-          <HeroCard
-            title="Emmes"
-            logo={<EmmesMark />}
-            description="Founded as Emmes more than 47 years ago, Emmes Group has grown"
-            mediaClassName="bg-[radial-gradient(circle_at_30%_20%,rgba(83,210,255,0.5),transparent_45%),radial-gradient(circle_at_70%_40%,rgba(120,255,214,0.35),transparent_50%),linear-gradient(120deg,#0c0f18_10%,#0c1524_45%,#0e2238_100%)]"
-            mediaOverlayClassName="bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15),transparent_55%)]"
-            arrowLabel="Explore Emmes"
-            revealDescriptionOnHover
-            raiseTextOnHover
-            arrowRotateOnHover
-          />
-          <HeroCard
-            title="Veridix"
-            logo={<VeridixMark />}
-            description="Transforming clinical development with intelligent, connected systems"
-            mediaClassName="bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.45),rgba(255,255,255,0)),linear-gradient(120deg,#d8d6d1_0%,#ece9e4_50%,#f5f6f8_100%)]"
-            mediaOverlayClassName="bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.15),transparent_60%)]"
-            arrowLabel="Explore Veridix"
-            revealDescriptionOnHover
-            raiseTextOnHover
-            arrowRotateOnHover
-          />
+          {resolvedCards.map((card, index) => {
+            const title =
+              card.title || defaultCards[index]?.title || "Explore";
+            const descriptionText =
+              card.description || defaultCards[index]?.description || "";
+            const iconUrl = getImageUrl(
+              typeof card.icon === "string"
+                ? card.icon
+                : card.icon?.url || card.icon?.data?.url,
+            );
+            const hrefSlug = getSlug(card.blog) || getSlug(card.our_brand);
+            const href = hrefSlug ? `/${hrefSlug}` : undefined;
+            const coverUrl = getCoverUrl(card.blog) || getCoverUrl(card.our_brand);
+            const logo = iconUrl ? (
+              <div className="flex items-center gap-2 text-black">
+                <Image
+                  src={iconUrl}
+                  alt=""
+                  width={192}
+                  height={192}
+                  className="h-32 w-32 object-contain"
+                  aria-hidden="true"
+                  unoptimized
+                />
+                <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#1d3173] via-[#2b6cb0] to-[#5aa7ff]">
+                  {title}
+                </span>
+              </div>
+            ) : index === 0 ? (
+              <EmmesMark />
+            ) : index === 1 ? (
+              <VeridixMark />
+            ) : undefined;
+
+            const cardContent = (
+              <HeroCard
+                title={title}
+                logo={logo}
+                description={descriptionText}
+                mediaClassName={
+                  coverUrl
+                    ? "bg-cover bg-center"
+                    : index === 0
+                      ? "bg-[radial-gradient(circle_at_30%_20%,rgba(83,210,255,0.5),transparent_45%),radial-gradient(circle_at_70%_40%,rgba(120,255,214,0.35),transparent_50%),linear-gradient(120deg,#0c0f18_10%,#0c1524_45%,#0e2238_100%)]"
+                      : "bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.45),rgba(255,255,255,0)),linear-gradient(120deg,#d8d6d1_0%,#ece9e4_50%,#f5f6f8_100%)]"
+                }
+                mediaStyle={
+                  coverUrl ? { backgroundImage: `url(${coverUrl})` } : undefined
+                }
+                mediaOverlayClassName={
+                  index === 0
+                    ? "bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15),transparent_55%)]"
+                    : "bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.15),transparent_60%)]"
+                }
+                arrowLabel={
+                  card.ctaLabel ||
+                  card.cta_label ||
+                  defaultCards[index]?.ctaLabel ||
+                  "Learn more"
+                }
+                revealDescriptionOnHover
+                raiseTextOnHover
+                arrowRotateOnHover
+              />
+            );
+
+            return href ? (
+              <Link key={card.id ?? index} href={href} className="block">
+                {cardContent}
+              </Link>
+            ) : (
+              <div key={card.id ?? index}>{cardContent}</div>
+            );
+          })}
         </div>
       </div>
     </Wrapper>
