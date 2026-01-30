@@ -30,6 +30,19 @@ type HeroSectionContent = {
   subtitle?: string;
   description?: string;
   cards?: HeroCardContent[];
+  background_media?:
+    | string
+    | {
+        url?: string;
+        mime?: string;
+        formats?: {
+          large?: { url?: string };
+          medium?: { url?: string };
+          small?: { url?: string };
+          thumbnail?: { url?: string };
+        };
+      }
+    | { data?: { url?: string; mime?: string; formats?: { large?: { url?: string }; medium?: { url?: string }; small?: { url?: string }; thumbnail?: { url?: string } } } };
   button?: {
     name?: string;
     link?: string;
@@ -127,6 +140,24 @@ export default function Hero({ section }: { section?: HeroSectionContent }) {
     typeof button?.icon === "string"
       ? getImageUrl(button.icon)
       : getImageUrl(button?.icon?.url);
+  const backgroundMedia =
+    typeof section?.background_media === "string"
+      ? { url: section.background_media }
+      : section?.background_media && "data" in section.background_media
+        ? section.background_media.data
+        : section?.background_media;
+  const backgroundUrl = getImageUrl(
+    backgroundMedia?.url ||
+      backgroundMedia?.formats?.large?.url ||
+      backgroundMedia?.formats?.medium?.url ||
+      backgroundMedia?.formats?.small?.url ||
+      backgroundMedia?.formats?.thumbnail?.url,
+  );
+  const isRemoteBackground = Boolean(backgroundUrl?.startsWith("http"));
+  const backgroundMime = backgroundMedia?.mime || "";
+  const isVideo =
+    backgroundMime.startsWith("video/") ||
+    (backgroundUrl ? /\.(mp4|webm|ogg)(\?.*)?$/i.test(backgroundUrl) : false);
 
   const rawCards = Array.isArray(section?.cards) ? section?.cards : [];
   const visibleCards = rawCards
@@ -161,20 +192,51 @@ export default function Hero({ section }: { section?: HeroSectionContent }) {
     );
   };
 
+  const containerClassName = backgroundUrl
+    ? "rounded-b-4xl relative overflow-hidden px-0 xl:px-0"
+    : "emmes-hero-bottom rounded-b-4xl relative overflow-hidden px-0 xl:px-0";
+
   return (
     <Wrapper
       as="section"
-      containerClassName="emmes-hero-bottom rounded-b-4xl relative overflow-hidden px-0 xl:px-0"
+      containerClassName={containerClassName}
       isMaxWidthChangeRequired="max-w-none"
       className="relative"
     >
-      <SiteHeader />
+      <div className="relative z-10">
+        <SiteHeader />
+      </div>
+      {backgroundUrl ? (
+        <div className="absolute inset-0 z-0">
+          {isVideo ? (
+            <video
+              className="h-full w-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+            >
+              <source src={backgroundUrl} type={backgroundMime || undefined} />
+            </video>
+          ) : (
+            <Image
+              src={backgroundUrl}
+              alt=""
+              fill
+              priority
+              className="object-cover"
+              sizes="100vw"
+              unoptimized={isRemoteBackground}
+            />
+          )}
+        </div>
+      ) : null}
       <div className="pointer-events-none absolute inset-0 opacity-90">
         <div className="absolute -left-16 top-0 h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.12),rgba(255,255,255,0)_70%)]" />
         <div className="absolute -right-28 bottom-0 h-96 w-96 rounded-full bg-[radial-gradient(circle_at_center,rgba(13,120,255,0.35),rgba(13,120,255,0)_70%)]" />
       </div>
 
-      <div className="mx-auto w-full max-w-screen-xl px-3 py-16 text-white xl:px-5 md:py-20">
+      <div className="relative z-10 mx-auto w-full max-w-screen-xl px-3 py-16 text-white xl:px-5 md:py-20">
         <div className="mx-auto max-w-6xl text-center">
           {subtitle ? (
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-white/70">

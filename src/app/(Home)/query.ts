@@ -32,6 +32,7 @@ export const fetchHomepageData = async () => {
               },
               "section.hero-section": {
                 populate: {
+                  background_media: true,
                   button: {
                     populate: "*",
                   },

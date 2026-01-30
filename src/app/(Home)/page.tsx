@@ -76,6 +76,10 @@ export default async function HomePage() {
     (section: { __component?: string }) =>
       section?.__component === "section.hero-section",
   );
+  const truthSection = page?.hero_section?.find(
+    (section: { __component?: string }) =>
+      section?.__component === "section.text-media-section",
+  );
   console.log("page data show ishere",heroSection);
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
@@ -116,7 +120,7 @@ export default async function HomePage() {
       {/* /> */}
 
       <Hero section={heroSection} />
-      <TruthSection />
+      <TruthSection section={truthSection} />
       <ResourceCenter />
       <StatsSection />
       <PartnerSection />
