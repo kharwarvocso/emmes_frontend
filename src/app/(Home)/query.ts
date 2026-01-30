@@ -1,114 +1,43 @@
 import apiClient from "@/lib/axios";
+import { PagesResponseSchema } from "@/lib/strapi/schema";
 import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 import qs from "qs";
+
 export const fetchHomepageData = async () => {
   try {
     const queryString = qs.stringify(
       {
+        filters: {
+          slug: {
+            $eq: "home",
+          },
+        },
         populate: {
-          // Populate SEO metadata fully
-          metaData: {
+          seo: {
             populate: "*",
           },
-          // Populate dynamic zone pageSections with nested components
-          pageSections: {
-            // Use 'on' syntax for dynamic zone components in Strapi v5
+          hero_section: {
             on: {
-              // Banner Slider Section
-              "page-components.slider-section": {
-                populate: {
-                  slide: {
-                    populate: {
-                      backgroundImage: true,
-                      productImage: true,
-                      button: {
-                        populate: {
-                          icon: true,
-                        },
-                      },
-                    },
-                  },
-                  backgroundImage: true,
-                },
+              "section.text-media-section": {
+                populate: "*",
               },
-              // Product Slider Section
-              "page-components.product-slider-section": {
-                populate: {
-                  bannerCard: {
-                    populate: {
-                      backgroundImage: true,
-                      productImage: true,
-                      button: {
-                        populate: {
-                          icon: true,
-                        },
-                      },
-                    },
-                  },
-                  // Only get documentId and slug from products
-                  products: {
-                    populate: {
-                      categories: true,
-                      product_variants: {
-                        populate: {
-                          size: true,
-                          color: true,
-                          media: {
-                            populate: {
-                              image: true,
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                  product_variants: {
-                    populate: {
-                      product: {
-                        populate: {
-                          categories: true,
-                        },
-                      },
-                      size: true,
-                      color: true,
-                      media: {
-                        populate: {
-                          image: true,
-                        },
-                      },
-                    },
-                  },
-                  button: {
-                    populate: {
-                      icon: true,
-                    },
-                  },
-                },
+              "section.services-section": {
+                populate: "*",
               },
-              // Offer Section
-              "page-components.offer-section": {
-                populate: {
-                  bannerImage: true,
-                  // Only get documentId and slug from products
-                  products: {
-                    fields: ["documentId", "slug"],
-                  },
-                  button: {
-                    populate: {
-                      icon: true,
-                    },
-                  },
-                },
+              "section.metrix": {
+                populate: "*",
               },
-              // Marquee Section
-              "page-components.marquee-section": {
-                populate: {
-                  card: {
-                    populate: {
-                      image: true,
-                    },
-                  },
-                },
+              "section.memeber-section": {
+                populate: "*",
+              },
+              "section.hero-section": {
+                populate: "*",
+              },
+              "section.case-study": {
+                populate: "*",
+              },
+              "section.blog-card-section": {
+                populate: "*",
               },
             },
           },
@@ -117,18 +46,20 @@ export const fetchHomepageData = async () => {
       { encodeValuesOnly: true },
     );
 
-    const { data } = await apiClient.get(`/api/homepage?${queryString}`);
-    return data;
+    const { data } = await apiClient.get(`/api/pages?${queryString}`);
+    const parsed = PagesResponseSchema.safeParse(data);
+    if (!parsed.success) {
+      console.error("Invalid pages payload:", parsed.error.flatten());
+      return { data: [], meta: {} };
+    }
+    return parsed.data ?? { data: [], meta: {} };
   } catch {
-    return { data: { pageSections: [], metaData: null } };
+    return { data: [], meta: {} };
   }
 };
 
-
-
-
 export const homepageQueryOptions = queryOptions({
-  queryKey: ["homepage"],
+  queryKey: ["homepage", "home"],
   queryFn: fetchHomepageData,
   placeholderData: keepPreviousData,
 });
