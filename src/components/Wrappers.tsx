@@ -23,7 +23,7 @@ export default function Wrapper({
   isTop2 = false,
   children,
   className = "",
-  isMaxWidthChangeRequired = "max-w-screen-2xl",
+  isMaxWidthChangeRequired = "max-w-screen-xl",
   as: Component = "section",
   bgImage,
   ...props

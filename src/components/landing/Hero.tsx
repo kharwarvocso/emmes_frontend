@@ -72,7 +72,7 @@ export default function Hero() {
         <div className="absolute -right-28 bottom-0 h-96 w-96 rounded-full bg-[radial-gradient(circle_at_center,rgba(13,120,255,0.35),rgba(13,120,255,0)_70%)]" />
       </div>
 
-      <div className="mx-auto w-full max-w-screen-2xl px-3 py-16 text-white xl:px-5 md:py-20">
+      <div className="mx-auto w-full max-w-screen-xl px-3 py-16 text-white xl:px-5 md:py-20">
         <div className="mx-auto max-w-6xl text-center">
             <h1 className="emmes-heading">
               Delivering Global Health Impact Through People, Science and
