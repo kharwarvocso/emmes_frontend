@@ -85,30 +85,31 @@ export default function TruthSection({ section }: { section?: TruthSectionConten
     ) : null;
 
   return (
-    <section id="about" className={bgMedia.url ? "relative overflow-hidden" : "bg-white"}>
-      {bgMedia.url ? (
-        <div className="absolute inset-0 z-0">
-          {bgIsVideo ? (
-            <video className="h-full w-full object-cover" autoPlay muted loop playsInline>
-              <source src={bgMedia.url} type={bgMedia.mime || undefined} />
-            </video>
-          ) : (
-            <Image
-              src={bgMedia.url}
-              alt=""
-              fill
-              className="object-cover"
-              sizes="100vw"
-              unoptimized
-              priority={false}
-            />
-          )}
-        </div>
-      ) : null}
+    <section id="about" className="bg-white">
+      <div className={bgMedia.url ? "relative overflow-hidden" : ""}>
+        {bgMedia.url ? (
+          <div className="absolute inset-0 z-0">
+            {bgIsVideo ? (
+              <video className="h-full w-full object-cover" autoPlay muted loop playsInline>
+                <source src={bgMedia.url} type={bgMedia.mime || undefined} />
+              </video>
+            ) : (
+              <Image
+                src={bgMedia.url}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="100vw"
+                unoptimized
+                priority={false}
+              />
+            )}
+          </div>
+        ) : null}
 
-      <Wrapper as="div" className="relative z-10 py-16 md:py-20">
-        {position === "top" ? mediaBlock : null}
-        <div className="mx-auto w-full text-center">
+        <Wrapper as="div" className="relative z-10 py-16 md:py-20">
+          {position === "top" ? mediaBlock : null}
+          <div className="mx-auto w-full text-center">
           <p className="text-md font-bold text-[#1d3173] sm:text-xl md:text-2xl">
             {subtitle}
           </p>
@@ -155,8 +156,9 @@ export default function TruthSection({ section }: { section?: TruthSectionConten
           ) : null}
         </div>
 
-        {position !== "top" ? mediaBlock : null}
-      </Wrapper>
+          {position !== "top" ? mediaBlock : null}
+        </Wrapper>
+      </div>
 
       {mediaIsVideo ? (
         <div className="mt-12">
@@ -166,4 +168,3 @@ export default function TruthSection({ section }: { section?: TruthSectionConten
     </section>
   );
 }
-
