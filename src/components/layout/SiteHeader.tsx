@@ -53,8 +53,8 @@ function SearchIcon({ className = "" }: { className?: string }) {
 
 
 export default function SiteHeader() {
-  const { data: topNavItems = [] } = useNavigation('top');
-  const { data: primaryNavItems = [] } = useNavigation('primary');
+  const { data: topNavItems = [] } = useNavigation("top");
+  const { data: primaryNavItems = [] } = useNavigation("primary");
   const { data: siteConfig } = useSiteConfig();
 
   const logoUrl = getImageUrl(siteConfig?.logo?.url);
@@ -115,7 +115,12 @@ export default function SiteHeader() {
           </div>
 
           <div className="flex items-center justify-between">
-            <Logo mode="light" className="h-10 md:h-12" src={logoUrl} />
+            <Logo
+              className="h-10 md:h-12"
+              src={logoUrl}
+              width={siteConfig?.logo?.width}
+              height={siteConfig?.logo?.height}
+            />
             <nav className="emmes-nav-primary hidden items-center justify-end gap-8 pb-2 lg:flex">
               {primaryNavItems.map((item, index) => (
                 <Link

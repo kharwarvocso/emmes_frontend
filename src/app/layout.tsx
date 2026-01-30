@@ -7,6 +7,8 @@ import Providers from "@/providers/Providers";
 import { Toaster } from "sonner";
 import { ViewTransitions } from "next-view-transitions";
 import Layout from "@/components/layout/Layout";
+import { getSiteConfig } from "@/lib/strapi/queries";
+import { getImageUrl } from "@/lib/strapi/utils";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -36,32 +38,44 @@ const metadataBase = (() => {
   }
 })();
 
-export const metadata: Metadata = {
-  metadataBase,
-  title: {
-    default: "TheEmmesGroup",
-    template: "%s | TheEmmesGroup",
-  },
-  description:
-    "Fraud prevention, cyber threat protection, and security solutions for individuals and businesses.",
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: "TheEmmesGroup",
-    type: "website",
-    locale: "en_US",
-    siteName: "TheEmmesGroup",
-    description:
-      "Fraud prevention, cyber threat protection, and security solutions for individuals and businesses.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "TheEmmesGroup",
-    description:
-      "Fraud prevention, cyber threat protection, and security solutions for individuals and businesses.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getSiteConfig();
+  const siteName = siteConfig?.site_name || "TheEmmesGroup";
+  const title = siteConfig?.meta_title || siteName;
+  const description =
+    siteConfig?.meta_description ||
+    siteConfig?.site_description ||
+    "Fraud prevention, cyber threat protection, and security solutions for individuals and businesses.";
+  const ogImageUrl = getImageUrl(siteConfig?.og_image?.url);
+  const faviconUrl = getImageUrl(siteConfig?.favicon?.url);
+
+  return {
+    metadataBase,
+    title: {
+      default: title,
+      template: `%s | ${siteName}`,
+    },
+    description,
+    alternates: {
+      canonical: "/",
+    },
+    openGraph: {
+      title,
+      type: "website",
+      locale: "en_US",
+      siteName,
+      description,
+      images: ogImageUrl ? [{ url: ogImageUrl }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ogImageUrl ? [ogImageUrl] : undefined,
+    },
+    icons: faviconUrl ? { icon: faviconUrl } : undefined,
+  };
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
