@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Wrapper from "@/components/Wrappers";
 import TruthVideoScroll from "@/components/landing/TruthVideoScroll";
+import TruthScrollText from "@/components/landing/TruthScrollText";
 import { getImageUrl } from "@/hooks/useSiteConfig";
 
 type TruthSectionContent = {
@@ -117,9 +118,12 @@ export default function TruthSection({ section }: { section?: TruthSectionConten
             {title}
           </h2>
           {description ? (
-            <p className="mt-4 mx-auto text-2xl font-semibold leading-relaxed text-[#1d3173] sm:text-3xl md:text-4xl">
-              {description}
-            </p>
+            <div className="mt-6">
+              <TruthScrollText
+                text={description}
+                className="text-[#1d3173]"
+              />
+            </div>
           ) : null}
 
           {buttonLabel && buttonHref ? (
