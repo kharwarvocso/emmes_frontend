@@ -3,18 +3,32 @@
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 
-export default function TruthVideoScroll() {
+export default function TruthVideoScroll({
+  src = "/default/emmesgroup.mp4",
+  poster = "/default/video-placeholder.jpg",
+}: {
+  src?: string;
+  poster?: string;
+}) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"],
+    offset: ["start start", "end start"],
   });
 
-  const width = useTransform(scrollYProgress, [0, 1], ["60%", "100vw"]);
-  const height = useTransform(scrollYProgress, [0, 1], ["55vh", "100vh"]);
-  const radius = useTransform(scrollYProgress, [0, 1], ["24px", "0px"]);
-  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
+  const width = useTransform(
+    scrollYProgress,
+    [0, 0.6, 1],
+    ["80%", "100vw", "100vw"],
+  );
+  const height = useTransform(
+    scrollYProgress,
+    [0, 0.6, 1],
+    ["60vh", "100vh", "100vh"],
+  );
+  const radius = useTransform(scrollYProgress, [0, 0.6, 1], ["24px", "0px", "0px"]);
+  const videoScale = useTransform(scrollYProgress, [0, 0.6, 1], [1, 1.08, 1.08]);
 
   if (reduceMotion) {
     return (
@@ -32,9 +46,9 @@ export default function TruthVideoScroll() {
                 loop
                 playsInline
                 preload="metadata"
-                poster="/default/video-placeholder.jpg"
+                poster={poster}
               >
-                <source src="/default/emmesgroup.mp4" type="video/mp4" />
+                <source src={src} type="video/mp4" />
               </video>
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
               
@@ -46,12 +60,12 @@ export default function TruthVideoScroll() {
   }
 
   return (
-    <div ref={containerRef} className="relative h-[200vh]">
+    <div ref={containerRef} className="relative h-[220vh] w-full px-4">
       <div className="sticky top-0 flex h-screen items-center justify-center">
         <motion.article
           id="videoCard"
-          className="group relative mx-auto overflow-hidden bg-black/5 shadow-sm ring-1 ring-black/5"
-          style={{ width, height, borderRadius: radius }}
+          className="group relative mx-auto overflow-hidden rounded-2xl bg-black/5 shadow-sm ring-1 ring-black/5 transition-[width] duration-100 ease-linear will-change-transform"
+          style={{ width, height, borderRadius: radius, maxWidth: "100vw", maxHeight: "100vh" }}
         >
           <div className="relative h-full w-full overflow-hidden">
             <motion.video
@@ -62,9 +76,9 @@ export default function TruthVideoScroll() {
               loop
               playsInline
               preload="metadata"
-              poster="/default/video-placeholder.jpg"
+              poster={poster}
             >
-              <source src="/default/emmesgroup.mp4" type="video/mp4" />
+              <source src={src} type="video/mp4" />
             </motion.video>
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
             

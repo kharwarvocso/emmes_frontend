@@ -69,13 +69,9 @@ export default function TruthSection({ section }: { section?: TruthSectionConten
     bgMedia.mime?.startsWith("video/") ||
     (bgMedia.url ? /\.(mp4|webm|ogg)(\?.*)?$/i.test(bgMedia.url) : false);
 
-  const mediaBlock = media.url ? (
-    <div className={position === "top" ? "mb-10" : "mt-10"}>
-      {mediaIsVideo ? (
-        <video className="h-full w-full rounded-3xl object-cover" autoPlay muted loop playsInline>
-          <source src={media.url} type={media.mime || undefined} />
-        </video>
-      ) : (
+  const mediaBlock =
+    media.url && !mediaIsVideo ? (
+      <div className={position === "top" ? "mb-10" : "mt-10"}>
         <Image
           src={media.url}
           alt=""
@@ -85,9 +81,8 @@ export default function TruthSection({ section }: { section?: TruthSectionConten
           sizes="100vw"
           unoptimized
         />
-      )}
-    </div>
-  ) : null;
+      </div>
+    ) : null;
 
   return (
     <section id="about" className={bgMedia.url ? "relative overflow-hidden" : "bg-white"}>
@@ -163,14 +158,12 @@ export default function TruthSection({ section }: { section?: TruthSectionConten
         {position !== "top" ? mediaBlock : null}
       </Wrapper>
 
-      {!media.url ? (
+      {mediaIsVideo ? (
         <div className="mt-12">
-          <TruthVideoScroll />
+          <TruthVideoScroll src={media.url} />
         </div>
       ) : null}
     </section>
   );
 }
-
-
 
