@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useId, useMemo, useRef } from "react";
+import React, { useEffect, useId, useMemo, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
 import "swiper/css";
@@ -72,12 +72,13 @@ export const Slider = <T,>({
 
   const mobileSpaceBetween = 10;
   const desktopSpaceBetween = 20;
+  const allowAutoplay = options?.autoplay !== false;
 
   const baseOptions: SwiperOptions = useMemo(
     () => ({
       slidesPerView: getSlidesPerView(defaultSlidesPerView),
       spaceBetween: mobileSpaceBetween,
-      autoplay: { delay: 2000, disableOnInteraction: false },
+      autoplay: allowAutoplay ? { delay: 2000, disableOnInteraction: false } : false,
       loop: enableLoop,
       navigation: enableNavigation
         ? {
@@ -107,6 +108,7 @@ export const Slider = <T,>({
       prevSelector,
       mobileSpaceBetween,
       desktopSpaceBetween,
+      allowAutoplay,
     ],
   );
 
@@ -114,6 +116,7 @@ export const Slider = <T,>({
   const swiperOptions: SwiperOptions = useMemo(() => ({ ...baseOptions, ...options }), [baseOptions, options]);
 
   const handleMouseEnter = () => {
+    if (!allowAutoplay) return;
     const autoplay = swiperRef.current?.autoplay;
     if (autoplay?.running) {
       autoplay.stop();
@@ -121,11 +124,26 @@ export const Slider = <T,>({
   };
 
   const handleMouseLeave = () => {
+    if (!allowAutoplay) return;
     const autoplay = swiperRef.current?.autoplay;
     if (autoplay && !autoplay.running) {
       autoplay.start();
     }
   };
+
+  useEffect(() => {
+    if (!externalNavigation || !swiperRef.current) return;
+    const nextEl = document.querySelector(nextSelector);
+    const prevEl = document.querySelector(prevSelector);
+    if (!nextEl || !prevEl) return;
+    swiperRef.current.params.navigation = {
+      ...(swiperRef.current.params.navigation || {}),
+      nextEl,
+      prevEl,
+    };
+    swiperRef.current.navigation?.init();
+    swiperRef.current.navigation?.update();
+  }, [externalNavigation, nextSelector, prevSelector]);
 
   return (
     <div className={cn("relative w-full", className)} aria-label="carousel" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -133,9 +151,22 @@ export const Slider = <T,>({
         {...swiperOptions}
         onSwiper={(instance) => {
           swiperRef.current = instance;
-           (swiperOptions as any).onSwiper?.(instance);
+          if (externalNavigation) {
+            const nextEl = document.querySelector(nextSelector);
+            const prevEl = document.querySelector(prevSelector);
+            if (nextEl && prevEl) {
+              instance.params.navigation = {
+                ...(instance.params.navigation || {}),
+                nextEl,
+                prevEl,
+              };
+              instance.navigation?.init();
+              instance.navigation?.update();
+            }
+          }
+          (swiperOptions as any).onSwiper?.(instance);
         }}
-        className={cn("w-full max-w-fit", swiperClassName)}
+        className={cn("w-full", swiperClassName)}
       >
         {safeLen > 0 &&
           data.map((item, index) => {
