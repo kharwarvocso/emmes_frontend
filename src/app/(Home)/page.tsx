@@ -76,10 +76,11 @@ export default async function HomePage() {
     (section: { __component?: string }) =>
       section?.__component === "section.hero-section",
   );
-  const truthSection = page?.hero_section?.find(
+  const textMediaSections = page?.hero_section?.filter(
     (section: { __component?: string }) =>
       section?.__component === "section.text-media-section",
   );
+  const truthSection = textMediaSections?.[0];
   const resourceCenterSection = page?.hero_section?.find(
     (section: { __component?: string }) =>
       section?.__component === "section.blog-card-section",
@@ -88,6 +89,7 @@ export default async function HomePage() {
     (section: { __component?: string }) =>
       section?.__component === "section.metrix",
   );
+  const partnerSection = textMediaSections?.[1];
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_FRONTEND_BASE_URL ||
@@ -130,7 +132,7 @@ export default async function HomePage() {
       <TruthSection section={truthSection} />
       <ResourceCenter section={resourceCenterSection} />
       <StatsSection section={metrixSection} />
-      <PartnerSection />
+      <PartnerSection section={partnerSection} />
       <LeadershipSection />
       <SolutionsSection />
       <CasesSection />
