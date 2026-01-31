@@ -8,6 +8,7 @@ type PartnerSectionContent = {
   subtitle?: string | null;
   title?: string | null;
   description?: string | null;
+  position?: "top" | "bottom" | "left" | "right" | null;
   is_hidden?: boolean | null;
   media?:
     | string
@@ -51,6 +52,7 @@ export default function PartnerSection({
   const subtitle = section?.subtitle;
   const title = section?.title;
   const description = section?.description;
+  const position = section?.position || "right";
   const button = section?.button;
   const buttonLabel = button?.name || undefined;
   const buttonHref = button?.link || undefined;
@@ -98,7 +100,45 @@ export default function PartnerSection({
       </div>
 
       <Wrapper as="div" className="relative py-16 md:py-20">
-        <div className="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+        <div
+          className={
+            position === "top" || position === "bottom"
+              ? "grid gap-10"
+              : "grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]"
+          }
+        >
+          {(position === "bottom" || position === "left") && media.url ? (
+            <div
+              className={`relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(2,12,32,0.35)] ${
+                position === "bottom"
+                  ? "mx-auto h-[240px] w-full max-w-4xl sm:h-[300px] md:h-[340px]"
+                  : ""
+              }`}
+            >
+              {mediaIsVideo ? (
+                <video
+                  className="h-full w-full object-cover"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                >
+                  <source src={media.url} type={media.mime || undefined} />
+                </video>
+              ) : (
+                <Image
+                  src={media.url}
+                  alt=""
+                  width={880}
+                  height={640}
+                  className="h-full w-full object-cover"
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                  unoptimized
+                />
+              )}
+            </div>
+          ) : null}
+
           <div className="text-white">
             {subtitle ? (
               <p className="text-sm font-semibold uppercase tracking-wide text-white/80">
@@ -155,8 +195,14 @@ export default function PartnerSection({
             ) : null}
           </div>
 
-          {media.url ? (
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(2,12,32,0.35)]">
+          {(position === "top" || position === "right") && media.url ? (
+            <div
+              className={`relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(2,12,32,0.35)] ${
+                position === "top"
+                  ? "mx-auto h-[240px] w-full max-w-4xl sm:h-[300px] md:h-[340px]"
+                  : ""
+              }`}
+            >
               {mediaIsVideo ? (
                 <video
                   className="h-full w-full object-cover"
