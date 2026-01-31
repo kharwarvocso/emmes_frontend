@@ -9,6 +9,10 @@ type PartnerSectionContent = {
   title?: string | null;
   description?: string | null;
   is_hidden?: boolean | null;
+  media?:
+    | string
+    | { url?: string; mime?: string }
+    | { data?: { url?: string; mime?: string } };
   bg_media?:
     | string
     | { url?: string; mime?: string }
@@ -50,11 +54,15 @@ export default function PartnerSection({
   const button = section?.button;
   const buttonLabel = button?.name || undefined;
   const buttonHref = button?.link || undefined;
-  const buttonIconPosition = button?.icon_position === "left" ? "left" : "right";
   const buttonIconUrl =
     typeof button?.icon === "string"
       ? getImageUrl(button.icon)
       : getImageUrl(button?.icon?.url || button?.icon?.data?.url);
+
+  const media = resolveMedia(section?.media);
+  const mediaIsVideo =
+    media.mime?.startsWith("video/") ||
+    (media.url ? /\.(mp4|webm|ogg)(\?.*)?$/i.test(media.url) : false);
 
   const bgMedia = resolveMedia(section?.bg_media);
   const bgIsVideo =
@@ -90,40 +98,29 @@ export default function PartnerSection({
       </div>
 
       <Wrapper as="div" className="relative py-16 md:py-20">
-        <div className="max-w-4xl text-white">
-          {subtitle ? (
-            <p className="text-sm font-semibold uppercase tracking-wide text-white/80">
-              {subtitle}
-            </p>
-          ) : null}
-          {title ? (
-            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
-              {title}
-            </h2>
-          ) : null}
-          {description ? (
-            <p className="mt-5 text-base text-white/85 sm:text-lg">{description}</p>
-          ) : null}
-          {buttonLabel ? (
-            buttonHref ? (
-              <Link
-                href={buttonHref}
-                className="mt-8 inline-flex min-w-[320px] items-center justify-between gap-3 rounded-full bg-[#0b66ff] px-7 py-3 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(2,12,32,0.35)]"
-              >
-                {buttonIconUrl && buttonIconPosition === "left" ? (
-                  <Image
-                    src={buttonIconUrl}
-                    alt=""
-                    width={16}
-                    height={16}
-                    className="h-4 w-4"
-                    aria-hidden="true"
-                    unoptimized
-                  />
-                ) : null}
-                {buttonLabel}
-                {buttonIconUrl ? (
-                  buttonIconPosition === "right" ? (
+        <div className="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="text-white">
+            {subtitle ? (
+              <p className="text-sm font-semibold uppercase tracking-wide text-white/80">
+                {subtitle}
+              </p>
+            ) : null}
+            {title ? (
+              <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+                {title}
+              </h2>
+            ) : null}
+            {description ? (
+              <p className="mt-5 text-base text-white/85 sm:text-lg">{description}</p>
+            ) : null}
+            {buttonLabel ? (
+              buttonHref ? (
+                <Link
+                  href={buttonHref}
+                  className="mt-8 inline-flex min-w-[320px] items-center justify-between gap-3 rounded-full bg-[#0b66ff] px-7 py-3 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(2,12,32,0.35)]"
+                >
+                  {buttonLabel}
+                  {buttonIconUrl ? (
                     <Image
                       src={buttonIconUrl}
                       alt=""
@@ -133,27 +130,14 @@ export default function PartnerSection({
                       aria-hidden="true"
                       unoptimized
                     />
-                  ) : null
-                ) : (
-                  <HiArrowRight className="h-4 w-4" aria-hidden="true" />
-                )}
-              </Link>
-            ) : (
-              <button className="mt-8 inline-flex min-w-[320px] items-center justify-between gap-3 rounded-full bg-[#0b66ff] px-7 py-3 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(2,12,32,0.35)]">
-                {buttonIconUrl && buttonIconPosition === "left" ? (
-                  <Image
-                    src={buttonIconUrl}
-                    alt=""
-                    width={16}
-                    height={16}
-                    className="h-4 w-4"
-                    aria-hidden="true"
-                    unoptimized
-                  />
-                ) : null}
-                {buttonLabel}
-                {buttonIconUrl ? (
-                  buttonIconPosition === "right" ? (
+                  ) : (
+                    <HiArrowRight className="h-4 w-4" aria-hidden="true" />
+                  )}
+                </Link>
+              ) : (
+                <button className="mt-8 inline-flex min-w-[320px] items-center justify-between gap-3 rounded-full bg-[#0b66ff] px-7 py-3 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(2,12,32,0.35)]">
+                  {buttonLabel}
+                  {buttonIconUrl ? (
                     <Image
                       src={buttonIconUrl}
                       alt=""
@@ -163,12 +147,38 @@ export default function PartnerSection({
                       aria-hidden="true"
                       unoptimized
                     />
-                  ) : null
-                ) : (
-                  <HiArrowRight className="h-4 w-4" aria-hidden="true" />
-                )}
-              </button>
-            )
+                  ) : (
+                    <HiArrowRight className="h-4 w-4" aria-hidden="true" />
+                  )}
+                </button>
+              )
+            ) : null}
+          </div>
+
+          {media.url ? (
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(2,12,32,0.35)]">
+              {mediaIsVideo ? (
+                <video
+                  className="h-full w-full object-cover"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                >
+                  <source src={media.url} type={media.mime || undefined} />
+                </video>
+              ) : (
+                <Image
+                  src={media.url}
+                  alt=""
+                  width={880}
+                  height={640}
+                  className="h-full w-full object-cover"
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                  unoptimized
+                />
+              )}
+            </div>
           ) : null}
         </div>
       </Wrapper>
