@@ -25,7 +25,16 @@ export const fetchHomepageData = async () => {
                 populate: "*",
               },
               "section.metrix": {
-                populate: "*",
+                populate: {
+                  button: {
+                    populate: "*",
+                  },
+                  metrix: {
+                    populate: {
+                      icon: true,
+                    },
+                  },
+                },
               },
               "section.memeber-section": {
                 populate: "*",

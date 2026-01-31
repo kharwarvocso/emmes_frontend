@@ -197,3 +197,29 @@ export const BlogCardSectionSchema = z
   .passthrough();
 
 export type BlogCardSection = z.infer<typeof BlogCardSectionSchema>;
+
+export const MatrixSchema = z
+  .object({
+    value: z.union([z.number(), z.string()]).nullable().optional(),
+    suffix: z.string().nullable().optional(),
+    description: z.string().nullable().optional(),
+    icon: MediaSingleSchema.optional(),
+  })
+  .passthrough();
+
+export const MetrixSectionSchema = z
+  .object({
+    __component: z.literal("section.metrix").optional(),
+    subtitle: z.string().nullable().optional(),
+    description: z.string().nullable().optional(),
+    title: z.string().nullable().optional(),
+    button: ButtonSchema.nullable().optional(),
+    metrix: z.preprocess(
+      (val) => (val === null ? [] : val),
+      z.array(MatrixSchema).optional(),
+    ),
+    ishidden: z.boolean().optional(),
+  })
+  .passthrough();
+
+export type MetrixSection = z.infer<typeof MetrixSectionSchema>;
