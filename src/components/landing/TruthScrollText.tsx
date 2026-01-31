@@ -30,10 +30,14 @@ function ScrollWord({
 
 export default function TruthScrollText({
   text,
+  subtitle,
+  title,
   className,
   wrapperClassName,
 }: {
   text: string;
+  subtitle?: string;
+  title?: string;
   className?: string;
   wrapperClassName?: string;
 }) {
@@ -47,9 +51,21 @@ export default function TruthScrollText({
 
   if (reduceMotion) {
     return (
-      <p className={cn("text-2xl font-semibold leading-relaxed", className)}>
-        {text}
-      </p>
+      <div>
+        {subtitle ? (
+          <p className="text-md font-bold text-[#1d3173] sm:text-xl md:text-2xl">
+            {subtitle}
+          </p>
+        ) : null}
+        {title ? (
+          <h2 className="mt-4 mx-auto text-2xl font-semibold leading-relaxed text-[#1d3173] sm:text-3xl md:text-4xl">
+            {title}
+          </h2>
+        ) : null}
+        <p className={cn("mt-6 text-2xl font-semibold leading-relaxed", className)}>
+          {text}
+        </p>
+      </div>
     );
   }
 
@@ -57,10 +73,20 @@ export default function TruthScrollText({
     <div ref={containerRef} className={cn("h-[180vh]", wrapperClassName)}>
       <div className="sticky top-0 flex h-screen items-center justify-center">
         <div className="mx-auto w-full px-6">
-          <div className="mx-auto  text-center md:text-left">
+          <div className="mx-auto text-center md:text-left">
+            {subtitle ? (
+              <p className="text-md font-bold text-[#1d3173] sm:text-xl md:text-2xl">
+                {subtitle}
+              </p>
+            ) : null}
+            {title ? (
+              <h2 className="mt-4 mx-auto text-2xl font-semibold leading-relaxed text-[#1d3173] sm:text-3xl md:text-4xl">
+                {title}
+              </h2>
+            ) : null}
             <p
               className={cn(
-                "mt-4 mx-auto text-2xl font-semibold leading-relaxed text-[#1d3173] sm:text-3xl md:text-4xl",
+                "mt-6 mx-auto text-2xl font-semibold leading-relaxed text-[#1d3173] sm:text-3xl md:text-4xl",
                 "flex flex-wrap justify-center gap-x-3 gap-y-2 md:justify-start",
                 className,
               )}

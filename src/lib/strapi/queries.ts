@@ -26,7 +26,10 @@ export const getSiteConfig = async (): Promise<SiteConfig | null> => {
     return null;
   }
 
-  const json = await res.json();
+  const json = await res.json().catch(() => null);
+  if (!json || (typeof json === "object" && Object.keys(json).length === 0)) {
+    return null;
+  }
   const parsed = SiteConfigResponseSchema.safeParse(json);
   if (!parsed.success) {
     console.error("Invalid site config payload:", parsed.error.flatten());

@@ -57,7 +57,26 @@ export const fetchHomepageData = async () => {
                 populate: "*",
               },
               "section.blog-card-section": {
-                populate: "*",
+                populate: {
+                  bg_media: true,
+                  common_btn_icon: true,
+                  blogs: {
+                    populate: {
+                      coverImage: true,
+                      blog_categories: {
+                        populate: "*",
+                      },
+                    },
+                  },
+                  featured_card: {
+                    populate: {
+                      bg_media: true,
+                      button: {
+                        populate: "*",
+                      },
+                    },
+                  },
+                },
               },
             },
           },

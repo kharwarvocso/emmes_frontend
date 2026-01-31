@@ -111,15 +111,11 @@ export default function TruthSection({ section }: { section?: TruthSectionConten
         <Wrapper as="div" className="relative z-10 py-16 md:py-20">
           {position === "top" ? mediaBlock : null}
           <div className="mx-auto w-full text-center">
-          <p className="text-md font-bold text-[#1d3173] sm:text-xl md:text-2xl">
-            {subtitle}
-          </p>
-          <h2 className="mt-4 mx-auto text-2xl font-semibold leading-relaxed text-[#1d3173] sm:text-3xl md:text-4xl">
-            {title}
-          </h2>
           {description ? (
             <div className="mt-6">
               <TruthScrollText
+                subtitle={subtitle}
+                title={title}
                 text={description}
                 className="text-[#1d3173]"
               />
