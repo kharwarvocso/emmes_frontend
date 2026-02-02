@@ -1,16 +1,45 @@
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/lib/axios";
-import { SiteConfigResponseSchema, type SiteConfig } from "@/lib/strapi/schema";
+import qs from "qs";
+import {
+  SiteConfigResponseSchema,
+  SiteConfigSchema,
+  type SiteConfig,
+} from "@/lib/strapi/schema";
 
 export const fetchSiteConfig = async (): Promise<SiteConfig | null> => {
   try {
-    const { data } = await apiClient.get("/api/site-config", {
-      params: {
-        populate: "*",
+    const queryString = qs.stringify(
+      {
+        populate: {
+          logo: true,
+          favicon: true,
+          og_image: true,
+          footer: {
+            populate: {
+              cta_button: {
+                populate: "*",
+              },
+              footer_newsletter_cta: {
+                populate: "*",
+              },
+            },
+          },
+        },
       },
-    });
+      { encodeValuesOnly: true },
+    );
+    const { data } = await apiClient.get(`/api/site-config?${queryString}`);
     const parsed = SiteConfigResponseSchema.safeParse(data);
     if (!parsed.success) {
+      const fallback = (data as { data?: unknown })?.data ?? null;
+      const fallbackParsed = SiteConfigSchema.safeParse(fallback);
+      if (fallbackParsed.success) {
+        return fallbackParsed.data ?? null;
+      }
+      if (typeof data === "object" && data !== null && Object.keys(data).length === 0) {
+        return null;
+      }
       console.error("Invalid site config payload:", parsed.error.flatten());
       return null;
     }

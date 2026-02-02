@@ -58,6 +58,7 @@ import LeadershipSection from "@/components/landing/LeadershipSection";
 import SolutionsSection from "@/components/landing/SolutionsSection";
 import CasesSection from "@/components/landing/CasesSection";
 import { fetchHomepageData } from "./query";
+import { getOfferings, getTestimonials } from "@/lib/strapi/queries";
 
 // import JsonLd from "@/components/seo/JsonLd";
 
@@ -70,6 +71,8 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const homepageData = await fetchHomepageData();
+  const testimonials = await getTestimonials();
+  const offerings = await getOfferings();
   const page = homepageData?.data?.[0];
 
   const heroSection = page?.hero_section?.find(
@@ -88,6 +91,18 @@ export default async function HomePage() {
   const metrixSection = page?.hero_section?.find(
     (section: { __component?: string }) =>
       section?.__component === "section.metrix",
+  );
+  const servicesSection = page?.hero_section?.find(
+    (section: { __component?: string }) =>
+      section?.__component === "section.services-section",
+  );
+  const memberSection = page?.hero_section?.find(
+    (section: { __component?: string }) =>
+      section?.__component === "section.memeber-section",
+  );
+  const caseStudySection = page?.hero_section?.find(
+    (section: { __component?: string }) =>
+      section?.__component === "section.case-study",
   );
   const partnerSection = textMediaSections?.[1];
   const baseUrl =
@@ -128,14 +143,14 @@ export default async function HomePage() {
         }} */}
       {/* /> */}
 
-      <Hero section={heroSection} />
-      <TruthSection section={truthSection} />
-      <ResourceCenter section={resourceCenterSection} />
-      <StatsSection section={metrixSection} />
-      <PartnerSection section={partnerSection} />
-      <LeadershipSection />
-      <SolutionsSection />
-      <CasesSection />
+      <Hero section={heroSection as any} />
+      <TruthSection section={truthSection as any} />
+      <ResourceCenter section={resourceCenterSection as any} />
+      <StatsSection section={metrixSection as any} />
+      <PartnerSection section={partnerSection as any} />
+      <LeadershipSection section={memberSection as any} leaders={testimonials} />
+      <SolutionsSection section={servicesSection as any} offerings={offerings} />
+      <CasesSection section={caseStudySection as any} />
     </main>
   );
 }

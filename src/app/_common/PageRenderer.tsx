@@ -8,7 +8,9 @@ export default function PageRenderer() {
     ...homepageQueryOptions,
     enabled: false, // ✅ prevents re-fetching on client after hydration
   });
-  const pageSectionsData = data?.data?.pageSections ?? [];
+  const pageSectionsData = Array.isArray((data as any)?.data)
+    ? ((data as any).data[0]?.hero_section ?? [])
+    : [];
   //   console.log(pageSectionsData);
   return (
     <>

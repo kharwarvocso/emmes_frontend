@@ -22,7 +22,11 @@ export const fetchHomepageData = async () => {
                 populate: "*",
               },
               "section.services-section": {
-                populate: "*",
+                populate: {
+                  button: {
+                    populate: "*",
+                  },
+                },
               },
               "section.metrix": {
                 populate: {
@@ -63,7 +67,14 @@ export const fetchHomepageData = async () => {
                 },
               },
               "section.case-study": {
-                populate: "*",
+                populate: {
+                  button: {
+                    populate: "*",
+                  },
+                  case_studies: {
+                    populate: "*",
+                  },
+                },
               },
               "section.blog-card-section": {
                 populate: {

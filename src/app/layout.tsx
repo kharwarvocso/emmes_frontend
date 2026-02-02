@@ -42,9 +42,26 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteConfig = await getSiteConfig();
   const siteName = siteConfig?.site_name || "TheEmmesGroup";
   const title = siteConfig?.meta_title || siteName;
+  const extractText = (value: unknown) => {
+    if (typeof value === "string") return value;
+    if (Array.isArray(value)) {
+      return value
+        .map((block) => {
+          if (!block || typeof block !== "object") return "";
+          const children = (block as { children?: Array<{ text?: string }> }).children;
+          return Array.isArray(children)
+            ? children.map((child) => child?.text || "").join(" ")
+            : "";
+        })
+        .join(" ")
+        .trim();
+    }
+    return undefined;
+  };
+  const siteDescriptionText = extractText(siteConfig?.site_description);
   const description =
     siteConfig?.meta_description ||
-    siteConfig?.site_description ||
+    siteDescriptionText ||
     "Fraud prevention, cyber threat protection, and security solutions for individuals and businesses.";
   const ogImageUrl = getImageUrl(siteConfig?.og_image?.url);
   const faviconUrl = getImageUrl(siteConfig?.favicon?.url);

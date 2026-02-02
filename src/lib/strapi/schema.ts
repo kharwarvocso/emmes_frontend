@@ -4,54 +4,58 @@ const MediaFileSchema = z
   .object({
     id: z.number().optional(),
     documentId: z.string().optional(),
-    url: z.string().optional(),
-    width: z.number().optional(),
-    height: z.number().optional(),
+    url: z.string().nullable().optional(),
+    width: z.number().nullable().optional(),
+    height: z.number().nullable().optional(),
     alternativeText: z.string().nullable().optional(),
-    mime: z.string().optional(),
+    mime: z.string().nullable().optional(),
     formats: z
       .object({
-        large: z.object({ url: z.string().optional() }).optional(),
-        medium: z.object({ url: z.string().optional() }).optional(),
-        small: z.object({ url: z.string().optional() }).optional(),
-        thumbnail: z.object({ url: z.string().optional() }).optional(),
+        large: z.object({ url: z.string().nullable().optional() }).optional(),
+        medium: z.object({ url: z.string().nullable().optional() }).optional(),
+        small: z.object({ url: z.string().nullable().optional() }).optional(),
+        thumbnail: z.object({ url: z.string().nullable().optional() }).optional(),
       })
       .optional(),
   })
   .passthrough();
 
-const MediaSingleSchema = z.preprocess(
-  (val) =>
-    typeof val === "object" && val !== null && "data" in (val as object)
-      ? (val as { data?: unknown }).data
-      : val,
-  z.union([MediaFileSchema, z.string()]).nullable().optional(),
-);
+const MediaSingleSchema = z.preprocess((val) => {
+  if (val === null || val === undefined) return val;
+  if (typeof val === "string") return val;
+  if (Array.isArray(val)) return val[0] ?? null;
+  if (typeof val === "object" && val !== null && "data" in (val as object)) {
+    const data = (val as { data?: unknown }).data;
+    if (Array.isArray(data)) return data[0] ?? null;
+    return data ?? null;
+  }
+  return val;
+}, z.union([MediaFileSchema, z.string()]).nullable().optional());
 
-const MediaArraySchema = z.preprocess(
-  (val) =>
-    typeof val === "object" && val !== null && "data" in (val as object)
-      ? (val as { data?: unknown }).data
-      : val,
-  z.array(z.union([MediaFileSchema, z.string()])).nullable().optional(),
-);
+const MediaArraySchema = z.preprocess((val) => {
+  if (val === null || val === undefined) return val;
+  if (typeof val === "object" && val !== null && "data" in (val as object)) {
+    return (val as { data?: unknown }).data;
+  }
+  return val;
+}, z.array(z.union([MediaFileSchema, z.string()])).nullable().optional());
 
 export const SiteConfigSchema = z
   .object({
     id: z.number().optional(),
     documentId: z.string().optional(),
-    site_name: z.string().optional(),
+    site_name: z.string().nullable().optional(),
     tagline: z.string().nullable().optional(),
-    site_description: z.string().nullable().optional(),
-    meta_title: z.string().optional(),
-    meta_description: z.string().optional(),
+    site_description: z.unknown().nullable().optional(),
+    meta_title: z.string().nullable().optional(),
+    meta_description: z.string().nullable().optional(),
     logo: z
       .preprocess(
         (val) =>
           typeof val === "object" && val !== null && "data" in (val as object)
             ? (val as { data?: unknown }).data
             : val,
-        MediaFileSchema.nullable().optional(),
+        MediaSingleSchema,
       )
       .optional(),
     favicon: z
@@ -60,7 +64,7 @@ export const SiteConfigSchema = z
           typeof val === "object" && val !== null && "data" in (val as object)
             ? (val as { data?: unknown }).data
             : val,
-        MediaFileSchema.nullable().optional(),
+        MediaSingleSchema,
       )
       .optional(),
     og_image: z
@@ -69,19 +73,38 @@ export const SiteConfigSchema = z
           typeof val === "object" && val !== null && "data" in (val as object)
             ? (val as { data?: unknown }).data
             : val,
-        MediaFileSchema.nullable().optional(),
+        MediaSingleSchema,
       )
+      .optional(),
+    footer: z
+      .object({
+        cta_title: z.string().nullable().optional(),
+        cta_description: z.string().nullable().optional(),
+        cta_button: z.lazy(() => ButtonSchema).nullable().optional(),
+        footer_title: z.string().nullable().optional(),
+        footer_description: z.string().nullable().optional(),
+        footer_newsletter_cta: z.lazy(() => ButtonSchema).nullable().optional(),
+        is_ctahidden: z.boolean().optional(),
+      })
+      .passthrough()
+      .nullable()
       .optional(),
   })
   .passthrough();
 
-export const SiteConfigResponseSchema = z.preprocess(
-  (val) =>
-    typeof val === "object" && val !== null && "data" in (val as object)
-      ? (val as { data?: unknown }).data
-      : val,
-  SiteConfigSchema.nullable(),
-);
+export const SiteConfigResponseSchema = z.preprocess((val) => {
+  if (!val || typeof val !== "object") return val;
+  const raw = val as { data?: unknown };
+  const unwrapped =
+    raw.data && typeof raw.data === "object" && "data" in (raw.data as object)
+      ? (raw.data as { data?: unknown }).data
+      : raw.data ?? val;
+  const normalized = Array.isArray(unwrapped) ? unwrapped[0] ?? null : unwrapped;
+  if (normalized && typeof normalized === "object" && "attributes" in normalized) {
+    return (normalized as { attributes?: unknown }).attributes ?? normalized;
+  }
+  return normalized;
+}, SiteConfigSchema.nullable());
 
 export type SiteConfig = z.infer<typeof SiteConfigSchema>;
 
@@ -223,3 +246,164 @@ export const MetrixSectionSchema = z
   .passthrough();
 
 export type MetrixSection = z.infer<typeof MetrixSectionSchema>;
+
+export const MemeberSectionSchema = z
+  .object({
+    __component: z.literal("section.memeber-section").optional(),
+    subtitle: z.string().nullable().optional(),
+    description: z.string().nullable().optional(),
+    ishidden: z.boolean().optional(),
+    button: ButtonSchema.nullable().optional(),
+  })
+  .passthrough();
+
+export type MemeberSection = z.infer<typeof MemeberSectionSchema>;
+
+export const TestimonialSchema = z.preprocess((val) => {
+  if (!val || typeof val !== "object") return val;
+  const raw = val as { id?: unknown; documentId?: unknown; attributes?: unknown };
+  if (raw.attributes && typeof raw.attributes === "object") {
+    return {
+      ...(raw.attributes as object),
+      id: raw.id,
+      documentId: raw.documentId,
+    };
+  }
+  return val;
+}, z
+  .object({
+    id: z.number().optional(),
+    documentId: z.string().optional(),
+    name: z.string().nullable().optional(),
+    profession: z.string().nullable().optional(),
+    image: MediaSingleSchema.optional(),
+    order: z.number().nullable().optional(),
+  })
+  .passthrough());
+
+export const TestimonialsResponseSchema = z.preprocess((val) => {
+  if (!val || typeof val !== "object") return val;
+  const raw = val as { data?: unknown };
+  if (raw.data && typeof raw.data === "object" && "data" in (raw.data as object)) {
+    return { ...(val as object), data: (raw.data as { data?: unknown }).data };
+  }
+  return val;
+}, z
+  .object({
+    data: z.array(TestimonialSchema).optional(),
+    meta: z
+      .object({
+        pagination: z
+          .object({
+            page: z.number().optional(),
+            pageSize: z.number().optional(),
+            pageCount: z.number().optional(),
+            total: z.number().optional(),
+          })
+          .optional(),
+      })
+      .passthrough()
+      .optional(),
+  })
+  .passthrough());
+
+export type Testimonial = z.infer<typeof TestimonialSchema>;
+
+export const CaseStudyItemSchema = z
+  .object({
+    id: z.number().optional(),
+    documentId: z.string().optional(),
+    title: z.string().nullable().optional(),
+    description: z.string().nullable().optional(),
+    slug: z.string().nullable().optional(),
+    content: z.string().nullable().optional(),
+  })
+  .passthrough();
+
+export const CaseStudySectionSchema = z
+  .object({
+    __component: z.literal("section.case-study").optional(),
+    subtitle: z.string().nullable().optional(),
+    title: z.string().nullable().optional(),
+    description: z.string().nullable().optional(),
+    ishidden: z.boolean().optional(),
+    button: ButtonSchema.nullable().optional(),
+    case_studies: z.preprocess(
+      (val) =>
+        typeof val === "object" && val !== null && "data" in (val as object)
+          ? (val as { data?: unknown }).data
+          : val,
+      z.array(CaseStudyItemSchema).nullable().optional(),
+    ),
+  })
+  .passthrough();
+
+export type CaseStudySection = z.infer<typeof CaseStudySectionSchema>;
+
+export const ServicesSectionSchema = z
+  .object({
+    __component: z.literal("section.services-section").optional(),
+    title: z.string().nullable().optional(),
+    description: z.string().nullable().optional(),
+    button: ButtonSchema.nullable().optional(),
+    is_hidden: z.boolean().optional(),
+  })
+  .passthrough();
+
+export type ServicesSection = z.infer<typeof ServicesSectionSchema>;
+
+export const OfferingSchema = z.preprocess(
+  (val) => {
+    if (!val || typeof val !== "object") return val;
+    const raw = val as { id?: unknown; documentId?: unknown; attributes?: unknown };
+    if (raw.attributes && typeof raw.attributes === "object") {
+      return {
+        ...(raw.attributes as object),
+        id: raw.id,
+        documentId: raw.documentId,
+      };
+    }
+    return val;
+  },
+  z
+    .object({
+      id: z.number().optional(),
+      documentId: z.string().optional(),
+      title: z.string().nullable().optional(),
+      short_description: z.string().nullable().optional(),
+      image: MediaSingleSchema.optional(),
+      order: z.number().nullable().optional(),
+    })
+    .passthrough(),
+);
+
+export type Offering = z.infer<typeof OfferingSchema>;
+
+export const OfferingsResponseSchema = z.preprocess(
+  (val) => {
+    if (!val || typeof val !== "object") return val;
+    const raw = val as { data?: unknown };
+    if (raw.data && typeof raw.data === "object" && "data" in (raw.data as object)) {
+      return { ...(val as object), data: (raw.data as { data?: unknown }).data };
+    }
+    return val;
+  },
+  z
+    .object({
+      data: z.array(OfferingSchema).optional(),
+      meta: z
+        .object({
+          pagination: z
+            .object({
+              page: z.number().optional(),
+              pageSize: z.number().optional(),
+              pageCount: z.number().optional(),
+              total: z.number().optional(),
+            })
+            .optional(),
+        })
+        .passthrough()
+        .optional(),
+    })
+    .passthrough(),
+);
