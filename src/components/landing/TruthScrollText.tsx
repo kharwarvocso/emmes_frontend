@@ -28,25 +28,36 @@ function ScrollWord({
   );
 }
 
+import Link from "next/link";
+import Image from "next/image";
+
 export default function TruthScrollText({
   text,
   subtitle,
   title,
   className,
   wrapperClassName,
+  buttonLabel,
+  buttonHref,
+  buttonIconUrl,
+  buttonIconPosition,
 }: {
   text: string;
   subtitle?: string;
   title?: string;
   className?: string;
   wrapperClassName?: string;
+  buttonLabel?: string;
+  buttonHref?: string;
+  buttonIconUrl?: string; // or null
+  buttonIconPosition?: "left" | "right";
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
   const words = text.split(/\s+/).filter(Boolean);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"],
+    offset: ["start start", "end end"],
   });
 
   if (reduceMotion) {
@@ -65,12 +76,45 @@ export default function TruthScrollText({
         <p className={cn("mt-6 text-2xl font-semibold leading-relaxed", className)}>
           {text}
         </p>
+
+        {buttonLabel && buttonHref ? (
+          <div className="mt-8 flex justify-start">
+            <Link
+              href={buttonHref}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1d3173] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#16265a]"
+            >
+              {buttonIconUrl && buttonIconPosition === "left" ? (
+                <Image
+                  src={buttonIconUrl}
+                  alt=""
+                  width={16}
+                  height={16}
+                  className="h-4 w-4"
+                  aria-hidden="true"
+                  unoptimized
+                />
+              ) : null}
+              {buttonLabel}
+              {buttonIconUrl && buttonIconPosition === "right" ? (
+                <Image
+                  src={buttonIconUrl}
+                  alt=""
+                  width={16}
+                  height={16}
+                  className="h-4 w-4"
+                  aria-hidden="true"
+                  unoptimized
+                />
+              ) : null}
+            </Link>
+          </div>
+        ) : null}
       </div>
     );
   }
 
   return (
-    <div ref={containerRef} className={cn("h-[180vh]", wrapperClassName)}>
+    <div ref={containerRef} className={cn("h-[400vh]", wrapperClassName)}>
       <div className="sticky top-0 flex h-screen items-center justify-center">
         <div className="mx-auto w-full px-6">
           <div className="mx-auto text-center md:text-left">
@@ -105,6 +149,39 @@ export default function TruthScrollText({
                 );
               })}
             </p>
+
+            {buttonLabel && buttonHref ? (
+              <div className="mt-8 flex justify-center md:justify-start">
+                <Link
+                  href={buttonHref}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1d3173] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#16265a]"
+                >
+                  {buttonIconUrl && buttonIconPosition === "left" ? (
+                    <Image
+                      src={buttonIconUrl}
+                      alt=""
+                      width={16}
+                      height={16}
+                      className="h-4 w-4"
+                      aria-hidden="true"
+                      unoptimized
+                    />
+                  ) : null}
+                  {buttonLabel}
+                  {buttonIconUrl && buttonIconPosition === "right" ? (
+                    <Image
+                      src={buttonIconUrl}
+                      alt=""
+                      width={16}
+                      height={16}
+                      className="h-4 w-4"
+                      aria-hidden="true"
+                      unoptimized
+                    />
+                  ) : null}
+                </Link>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

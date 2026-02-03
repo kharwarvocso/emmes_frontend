@@ -111,50 +111,23 @@ export default function TruthSection({ section }: { section?: TruthSectionConten
         <Wrapper as="div" className="relative z-10 py-16 md:py-20">
           {position === "top" ? mediaBlock : null}
           <div className="mx-auto w-full text-center">
-          {description ? (
-            <div className="mt-6">
-              <TruthScrollText
-                subtitle={subtitle}
-                title={title}
-                text={description}
-                className="text-[#1d3173]"
-              />
-            </div>
-          ) : null}
+            {description ? (
+              <div className="mt-6">
+                <TruthScrollText
+                  subtitle={subtitle}
+                  title={title}
+                  text={description}
+                  className="text-[#1d3173]"
+                  buttonLabel={buttonLabel}
+                  buttonHref={buttonHref}
+                  buttonIconUrl={buttonIconUrl}
+                  buttonIconPosition={buttonIconPosition}
+                />
+              </div>
+            ) : null}
 
-          {buttonLabel && buttonHref ? (
-            <div className="mt-6 flex justify-center">
-              <Link
-                href={buttonHref}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1d3173] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#16265a]"
-              >
-                {buttonIconUrl && buttonIconPosition === "left" ? (
-                  <Image
-                    src={buttonIconUrl}
-                    alt=""
-                    width={16}
-                    height={16}
-                    className="h-4 w-4"
-                    aria-hidden="true"
-                    unoptimized
-                  />
-                ) : null}
-                {buttonLabel}
-                {buttonIconUrl && buttonIconPosition === "right" ? (
-                  <Image
-                    src={buttonIconUrl}
-                    alt=""
-                    width={16}
-                    height={16}
-                    className="h-4 w-4"
-                    aria-hidden="true"
-                    unoptimized
-                  />
-                ) : null}
-              </Link>
-            </div>
-          ) : null}
-        </div>
+
+          </div>
 
           {position !== "top" ? mediaBlock : null}
         </Wrapper>
