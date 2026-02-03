@@ -16,6 +16,7 @@ const MediaFileSchema = z
         small: z.object({ url: z.string().nullable().optional() }).optional(),
         thumbnail: z.object({ url: z.string().nullable().optional() }).optional(),
       })
+      .nullable()
       .optional(),
   })
   .passthrough();

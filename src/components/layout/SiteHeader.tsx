@@ -55,7 +55,11 @@ function SearchIcon({ className = "" }: { className?: string }) {
 export default function SiteHeader() {
   const { data: topNavItems = [] } = useNavigation("top");
   const { data: primaryNavItems = [] } = useNavigation("primary");
+  console.log('topNavItems', topNavItems)
+  console.log('primaryNavItems', primaryNavItems)
   const { data: siteConfig } = useSiteConfig();
+
+  console.log('siteConfig header', siteConfig)
 
   const logoUrl = getImageUrl(siteConfig?.logo?.url);
 
