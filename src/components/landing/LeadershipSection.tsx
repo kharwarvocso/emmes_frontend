@@ -159,7 +159,7 @@ export default function LeadershipSection({
               }}
               options={{
                 loop: false,
-                autoplay: false,
+                autoplay: { delay: 3000, disableOnInteraction: false },
                 spaceBetween: 52,
                 slidesOffsetAfter: 60,
               }}

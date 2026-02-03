@@ -212,6 +212,7 @@ export default function CasesSection({ section }: { section?: CaseStudySection }
                 nextEl: ".cases-next",
                 prevEl: ".cases-prev",
               }}
+              activeCount={1}
               defaultSlidesPerView={1.05}
               breakpoints={{
                 640: { slidesPerView: 1.4 },
@@ -220,17 +221,20 @@ export default function CasesSection({ section }: { section?: CaseStudySection }
               }}
               options={{
                 loop: false,
-                autoplay: false,
+                autoplay: { delay: 3000, disableOnInteraction: false },
                 spaceBetween: 52,
                 slidesOffsetAfter: 60,
               }}
               swiperClassName="pb-14 !overflow-visible"
-              renderItem={(card) => (
-                <div className="group relative h-[340px]">
+              renderItem={(card, _index, state) => {
+                const isActive = Boolean(state?.isActive);
+                return (
+                <div className={cn("group relative h-[340px]", isActive && "z-10")}>
                   <article
                     className={cn(
                       "absolute left-0 top-0 flex h-[340px] w-full items-end overflow-hidden rounded-3xl p-6 text-white transition-[height] duration-300 group-hover:h-[450px] group-hover:z-10",
                       card.imageUrl ? "" : card.bg,
+                      isActive && "h-[450px] z-10",
                     )}
                     style={
                       card.imageUrl
@@ -251,7 +255,12 @@ export default function CasesSection({ section }: { section?: CaseStudySection }
                       <div className="flex items-end justify-between gap-6">
                         <div>
                           <p className="text-lg font-semibold">{card.title}</p>
-                          <p className="mt-2 max-w-sm text-sm text-white/90 opacity-0 transition duration-300 group-hover:opacity-100">
+                          <p
+                            className={cn(
+                              "mt-2 max-w-sm text-sm text-white/90 opacity-0 transition duration-300 group-hover:opacity-100",
+                              isActive && "opacity-100",
+                            )}
+                          >
                             {card.description || " "}
                           </p>
                         </div>
@@ -260,7 +269,8 @@ export default function CasesSection({ section }: { section?: CaseStudySection }
                     </div>
                   </article>
                 </div>
-              )}
+                );
+              }}
             />
 
             <div className="mt-2 flex items-center justify-end">

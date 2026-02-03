@@ -16,7 +16,7 @@ interface SliderProps<T> {
   /** Optional: provide a deterministic id suffix; otherwise a unique one is derived via useId() */
   uniqueId?: string;
   navigationButtonStyle?: string;
-  renderItem: (item: T, index: number) => React.ReactNode;
+  renderItem: (item: T, index: number, state?: SlideRenderState) => React.ReactNode;
   breakpoints?: Record<number, { slidesPerView: number }>;
   options?: SwiperOptions;
   showNavigation?: boolean;
@@ -26,7 +26,14 @@ interface SliderProps<T> {
   className?: string;
   swiperClassName?: string;
   defaultSlidesPerView?: number;
+  /** Number of slides to mark active starting from the current active index. */
+  activeCount?: number;
 }
+
+type SlideRenderState = {
+  isActive: boolean;
+  activeIndex: number;
+};
 
 export const Slider = <T,>({
   data = [],
@@ -41,11 +48,13 @@ export const Slider = <T,>({
   className,
   swiperClassName,
   defaultSlidesPerView = 1,
+  activeCount = 1,
 }: SliderProps<T>) => {
   // Ensure stable, SSR-safe id; strip ":" to keep clean CSS selectors across React versions.
   const autoId = useId().replace(/[:]/g, "");
   const uid = uniqueId ?? `slider-${autoId}`;
   const swiperRef = useRef<SwiperInstance | null>(null);
+  const [activeIndex, setActiveIndex] = React.useState(0);
 
   const safeLen = data.length;
 
@@ -115,6 +124,16 @@ export const Slider = <T,>({
   // Respect user-provided options last (shallow merge)
   const swiperOptions: SwiperOptions = useMemo(() => ({ ...baseOptions, ...options }), [baseOptions, options]);
 
+  const activeIndices = useMemo(() => {
+    const count = Math.max(1, Math.min(activeCount, safeLen || 1));
+    const indices = new Set<number>();
+    if (safeLen === 0) return indices;
+    for (let i = 0; i < count; i += 1) {
+      indices.add((activeIndex + i) % safeLen);
+    }
+    return indices;
+  }, [activeIndex, activeCount, safeLen]);
+
   const handleMouseEnter = () => {
     if (!allowAutoplay) return;
     const autoplay = swiperRef.current?.autoplay;
@@ -151,6 +170,7 @@ export const Slider = <T,>({
         {...swiperOptions}
         onSwiper={(instance) => {
           swiperRef.current = instance;
+          setActiveIndex(instance.realIndex ?? instance.activeIndex ?? 0);
           if (externalNavigation) {
             const nextEl = document.querySelector(nextSelector);
             const prevEl = document.querySelector(prevSelector);
@@ -166,12 +186,20 @@ export const Slider = <T,>({
           }
           (swiperOptions as any).onSwiper?.(instance);
         }}
+        onSlideChange={(instance) => {
+          setActiveIndex(instance.realIndex ?? instance.activeIndex ?? 0);
+          (swiperOptions as any).onSlideChange?.(instance);
+        }}
         className={cn("w-full", swiperClassName)}
       >
         {safeLen > 0 &&
           data.map((item, index) => {
             const key = (item as unknown as { id?: string | number })?.id ?? index;
-            return <SwiperSlide key={key}>{renderItem(item, index)}</SwiperSlide>;
+            return (
+              <SwiperSlide key={key}>
+                {renderItem(item, index, { isActive: activeIndices.has(index), activeIndex })}
+              </SwiperSlide>
+            );
           })}
       </Swiper>
 
