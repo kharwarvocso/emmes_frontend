@@ -140,13 +140,13 @@ export default function LeadershipSection({
         </div>
 
         {orderedLeaders.length > 0 ? (
-          <div className="mt-10 -mr-[max(0px,calc((100vw-100%)/2))]">
+          <div className="mt-10">
             <Slider
               data={orderedLeaders}
               uniqueId={sliderId}
               showPagination={false}
               showNavigation={false}
-              className="overflow-visible pr-6"
+              className="overflow-visible"
               externalNavigation={{
                 nextEl: ".leadership-next",
                 prevEl: ".leadership-prev",
@@ -160,10 +160,10 @@ export default function LeadershipSection({
               options={{
                 loop: false,
                 autoplay: false,
-                spaceBetween: 16,
-                slidesOffsetAfter: 24,
+                spaceBetween: 52,
+                slidesOffsetAfter: 60,
               }}
-              swiperClassName="pb-12 !overflow-visible"
+              swiperClassName="pb-14 !overflow-visible"
               renderItem={(leader, index) => {
                 const accent = defaultAccents[index % defaultAccents.length];
                 const imageUrl = getImageUrl(
@@ -172,38 +172,39 @@ export default function LeadershipSection({
                     : leader?.image?.url || leader?.image?.data?.url,
                 );
                 return (
-                  <article
-                    className={`relative flex min-h-[260px] flex-col justify-end overflow-hidden rounded-3xl p-6 text-white sm:min-h-[320px] ${
-                      imageUrl ? "" : `bg-gradient-to-br ${accent}`
-                    }`}
-                    style={
-                      imageUrl
-                        ? {
+                  <div className="relative h-[320px] sm:h-[360px]">
+                    <article
+                      className={`relative flex h-full flex-col justify-end overflow-hidden rounded-3xl p-6 text-white ${imageUrl ? "" : `bg-gradient-to-br ${accent}`
+                        }`}
+                      style={
+                        imageUrl
+                          ? {
                             backgroundImage: `url(${imageUrl})`,
                             backgroundSize: "cover",
                             backgroundPosition: "center",
                           }
-                        : undefined
-                    }
-                  >
-                    <div className="absolute inset-0 bg-black/35" />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.18),transparent_60%)]" />
-                    <div className="relative">
-                      {leader?.name ? (
-                        <p className="text-lg font-semibold">{leader.name}</p>
-                      ) : null}
-                      {leader?.profession ? (
-                        <p className="mt-1 text-sm text-white/80">
-                          {leader.profession}
-                        </p>
-                      ) : null}
-                    </div>
-                  </article>
+                          : undefined
+                      }
+                    >
+                      <div className="absolute inset-0 bg-black/35" />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.18),transparent_60%)]" />
+                      <div className="relative">
+                        {leader?.name ? (
+                          <p className="text-lg font-semibold">{leader.name}</p>
+                        ) : null}
+                        {leader?.profession ? (
+                          <p className="mt-1 text-sm text-white/80">
+                            {leader.profession}
+                          </p>
+                        ) : null}
+                      </div>
+                    </article>
+                  </div>
                 );
               }}
             />
 
-            <div className="mt-6 flex items-center justify-end">
+            <div className="mt-2 flex items-center justify-end">
               <div className="flex items-center gap-6 rounded-full bg-[#ececec] px-7 py-3">
                 <button className="leadership-prev text-slate-500 transition hover:text-slate-900">
                   <HiArrowLongRight className="h-6 w-6 rotate-180" aria-hidden="true" />

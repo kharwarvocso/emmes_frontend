@@ -193,7 +193,7 @@ export default function SolutionsSection({
               uniqueId={sliderId}
               showPagination={false}
               showNavigation={false}
-              className="pr-4 sm:pr-6"
+              className="overflow-visible"
               externalNavigation={{
                 nextEl: ".solutions-next",
                 prevEl: ".solutions-prev",
@@ -207,10 +207,10 @@ export default function SolutionsSection({
               options={{
                 loop: false,
                 autoplay: false,
-                spaceBetween: 22,
-                slidesOffsetAfter: 24,
+                spaceBetween: 52,
+                slidesOffsetAfter: 60,
               }}
-              swiperClassName="pb-14"
+              swiperClassName="pb-14 !overflow-visible"
               renderItem={(card) => (
                 <article
                   className={cn(

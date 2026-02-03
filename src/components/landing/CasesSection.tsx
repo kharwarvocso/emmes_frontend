@@ -18,6 +18,7 @@ type CaseCard = {
   description?: string;
   slug?: string;
   bg: string;
+  imageUrl?: string;
 };
 
 const cardBackgrounds = [
@@ -50,6 +51,35 @@ const resolveIconUrl = (icon?: unknown) => {
   return undefined;
 };
 
+const resolveMediaUrl = (value?: unknown) => {
+  if (!value) return undefined;
+  if (typeof value === "string") return getImageUrl(value);
+  if (typeof value === "object" && value !== null && "url" in value) {
+    const media = value as {
+      url?: string;
+      formats?: {
+        large?: { url?: string };
+        medium?: { url?: string };
+        small?: { url?: string };
+        thumbnail?: { url?: string };
+      };
+    };
+    return getImageUrl(
+      media.url ||
+        media.formats?.large?.url ||
+        media.formats?.medium?.url ||
+        media.formats?.small?.url ||
+        media.formats?.thumbnail?.url,
+    );
+  }
+  if (typeof value === "object" && value !== null && "data" in value) {
+    const data = (value as { data?: unknown }).data;
+    if (Array.isArray(data)) return resolveMediaUrl(data[0]);
+    return resolveMediaUrl(data);
+  }
+  return undefined;
+};
+
 export default function CasesSection({ section }: { section?: CaseStudySection }) {
   const parsedSection = CaseStudySectionSchema.safeParse(section);
   const sectionData = parsedSection.success ? parsedSection.data : undefined;
@@ -69,13 +99,14 @@ export default function CasesSection({ section }: { section?: CaseStudySection }
     : [];
 
   const caseCards: CaseCard[] = rawCases
-    .filter((item) => item?.title || item?.description)
+    .filter((item) => item?.title || item?.description || item?.feature_image)
     .map((item, index) => ({
       id: item?.id,
       title: item?.title || "Case Study",
       description: item?.description || "",
       slug: item?.slug || undefined,
       bg: cardBackgrounds[index % cardBackgrounds.length],
+      imageUrl: resolveMediaUrl(item?.feature_image),
     }));
 
   if (!subtitle && !title && !sectionDescription && !buttonLabel && caseCards.length === 0) {
@@ -199,8 +230,17 @@ export default function CasesSection({ section }: { section?: CaseStudySection }
                   <article
                     className={cn(
                       "absolute left-0 top-0 flex h-[340px] w-full items-end overflow-hidden rounded-3xl p-6 text-white transition-[height] duration-300 group-hover:h-[450px] group-hover:z-10",
-                      card.bg,
+                      card.imageUrl ? "" : card.bg,
                     )}
+                    style={
+                      card.imageUrl
+                        ? {
+                            backgroundImage: `url(${card.imageUrl})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                          }
+                        : undefined
+                    }
                   >
                     <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,0.35))]" />
                     <span className="absolute left-6 top-6 rounded-full bg-[#4f6fdc] px-4 py-1 text-xs font-semibold">

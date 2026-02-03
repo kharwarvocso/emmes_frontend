@@ -318,6 +318,7 @@ export const CaseStudyItemSchema = z
     description: z.string().nullable().optional(),
     slug: z.string().nullable().optional(),
     content: z.string().nullable().optional(),
+    feature_image: MediaSingleSchema.optional(),
   })
   .passthrough();
 
