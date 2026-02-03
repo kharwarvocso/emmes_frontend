@@ -19,16 +19,16 @@ export default function TruthVideoScroll({
 
   const width = useTransform(
     scrollYProgress,
-    [0, 0.6, 1],
+    [0, 0.55, 1],
     ["80%", "100vw", "100vw"],
   );
   const height = useTransform(
     scrollYProgress,
-    [0, 0.6, 1],
+    [0, 0.55, 1],
     ["60vh", "100vh", "100vh"],
   );
-  const radius = useTransform(scrollYProgress, [0, 0.6, 1], ["24px", "0px", "0px"]);
-  const videoScale = useTransform(scrollYProgress, [0, 0.6, 1], [1, 1.08, 1.08]);
+  const radius = useTransform(scrollYProgress, [0, 0.5, 1], ["24px", "0px", "0px"]);
+  const videoScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.08, 1.08]);
 
   if (reduceMotion) {
     return (
@@ -51,7 +51,7 @@ export default function TruthVideoScroll({
                 <source src={src} type="video/mp4" />
               </video>
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-              
+
             </div>
           </article>
         </div>
@@ -60,7 +60,7 @@ export default function TruthVideoScroll({
   }
 
   return (
-    <div ref={containerRef} className="relative h-[220vh] w-full px-4">
+    <div ref={containerRef} className="relative h-[400vh] w-full">
       <div className="sticky top-0 flex h-screen items-center justify-center">
         <motion.article
           id="videoCard"
@@ -81,7 +81,7 @@ export default function TruthVideoScroll({
               <source src={src} type="video/mp4" />
             </motion.video>
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-            
+
           </div>
         </motion.article>
       </div>
