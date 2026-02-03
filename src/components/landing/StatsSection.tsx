@@ -1,3 +1,7 @@
+"use client";
+
+import { useRef, useEffect } from "react";
+import { useInView, useMotionValue, useSpring } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import Wrapper from "@/components/Wrappers";
@@ -24,10 +28,10 @@ const resolveMediaUrl = (media?: unknown) => {
     const item = media as MediaItem;
     return getImageUrl(
       item.url ||
-        item.formats?.large?.url ||
-        item.formats?.medium?.url ||
-        item.formats?.small?.url ||
-        item.formats?.thumbnail?.url,
+      item.formats?.large?.url ||
+      item.formats?.medium?.url ||
+      item.formats?.small?.url ||
+      item.formats?.thumbnail?.url,
     );
   }
   if (typeof media === "object" && media !== null && "data" in media) {
@@ -47,6 +51,54 @@ const formatValue = (value?: string | number | null, suffix?: string | null) => 
   if (!base) return undefined;
   return `${base}${suffix || ""}`;
 };
+
+
+
+function AnimatedCounter({
+  value,
+  suffix,
+}: {
+  value: string | number;
+  suffix?: string | null;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const motionValue = useMotionValue(0);
+  const springValue = useSpring(motionValue, {
+    damping: 50,
+    stiffness: 100,
+  });
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  useEffect(() => {
+    if (isInView) {
+      // Try to parse number from the value
+      const numericValue =
+        typeof value === "number"
+          ? value
+          : parseFloat(String(value).replace(/,/g, ""));
+
+      if (!isNaN(numericValue)) {
+        motionValue.set(numericValue);
+      }
+    }
+  }, [isInView, value, motionValue]);
+
+  useEffect(() => {
+    return springValue.on("change", (latest) => {
+      if (ref.current) {
+        // Format the number with commas/locale
+        const formattedNumber = Math.floor(latest).toLocaleString();
+        ref.current.textContent = `${formattedNumber}${suffix || ""}`;
+      }
+    });
+  }, [springValue, suffix]);
+
+  // Initial render content to avoid layout shift or empty space mechanism if needed
+  // But we want it to animate from 0.
+  // We can just render the span.
+
+  return <span ref={ref} className="text-4xl font-semibold text-[#1d3173] sm:text-5xl" />;
+}
 
 export default function StatsSection({ section }: { section?: MetrixSection }) {
   const parsedSection = MetrixSectionSchema.safeParse(section);
@@ -158,18 +210,16 @@ export default function StatsSection({ section }: { section?: MetrixSection }) {
 
           <div className="divide-y divide-slate-200">
             {stats.map((stat, index) => {
-              const value = formatValue(stat?.value, stat?.suffix);
+              // const value = formatValue(stat?.value, stat?.suffix);
               const iconUrl = resolveMediaUrl(stat?.icon);
               return (
                 <div
-                  key={`${value || "stat"}-${index}`}
+                  key={`${index}-stat`}
                   className="flex items-center justify-between gap-6 py-6"
                 >
                   <div>
-                    {value ? (
-                      <p className="text-4xl font-semibold text-[#1d3173] sm:text-5xl">
-                        {value}
-                      </p>
+                    {stat?.value !== null && stat?.value !== undefined ? (
+                      <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                     ) : null}
                     {stat?.description ? (
                       <p className="mt-2 text-base font-medium text-slate-600">
