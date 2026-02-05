@@ -59,15 +59,96 @@ import SolutionsSection from "@/components/landing/SolutionsSection";
 import CasesSection from "@/components/landing/CasesSection";
 import { fetchHomepageData } from "./query";
 import { getOfferings, getTestimonials } from "@/lib/strapi/queries";
-
-// import JsonLd from "@/components/seo/JsonLd";
+import { getImageUrl } from "@/lib/strapi/utils";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const revalidate = 0;
 
-export const metadata: Metadata = {
-  title: "TheEmmesGroup",
-  description: "TheEmmesGroup",
+const getBaseUrl = () =>
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.NEXT_PUBLIC_FRONTEND_BASE_URL ||
+  "http://localhost:3000";
+
+const resolveAbsoluteUrl = (value?: string) => {
+  if (!value) return undefined;
+  try {
+    return new URL(value, getBaseUrl()).toString();
+  } catch {
+    return value;
+  }
 };
+
+const resolveMediaUrl = (value?: unknown) => {
+  if (!value) return undefined;
+  if (typeof value === "string") return getImageUrl(value);
+  if (typeof value === "object" && value !== null && "url" in value) {
+    const media = value as {
+      url?: string;
+      formats?: {
+        large?: { url?: string };
+        medium?: { url?: string };
+        small?: { url?: string };
+        thumbnail?: { url?: string };
+      };
+    };
+    return getImageUrl(
+      media.url ||
+        media.formats?.large?.url ||
+        media.formats?.medium?.url ||
+        media.formats?.small?.url ||
+        media.formats?.thumbnail?.url,
+    );
+  }
+  if (typeof value === "object" && value !== null && "data" in value) {
+    const data = (value as { data?: unknown }).data;
+    if (Array.isArray(data)) return resolveMediaUrl(data[0]);
+    return resolveMediaUrl(data);
+  }
+  return undefined;
+};
+
+export async function generateMetadata(): Promise<Metadata> {
+  const homepageData = await fetchHomepageData();
+  const page = homepageData?.data?.[0];
+  const seo = page?.seo;
+
+  const baseUrl = getBaseUrl();
+  const metadataBase = (() => {
+    try {
+      return new URL(baseUrl);
+    } catch {
+      return undefined;
+    }
+  })();
+
+  const title = seo?.metaTitle || "TheEmmesGroup";
+  const description = seo?.metaDescription || "TheEmmesGroup";
+  const canonical = resolveAbsoluteUrl(seo?.canonicalURL || baseUrl);
+  const ogImageUrl = resolveMediaUrl(seo?.ogImage);
+  const twitterImageUrl = resolveMediaUrl(seo?.twitterImage) || ogImageUrl;
+
+  return {
+    metadataBase,
+    title,
+    description,
+    keywords: seo?.metaKeywords || undefined,
+    alternates: canonical ? { canonical } : undefined,
+    robots: seo?.metaRobots || undefined,
+    openGraph: {
+      title: seo?.ogTitle || title,
+      description: seo?.ogDescription || description,
+      type: "website",
+      url: canonical,
+      images: ogImageUrl ? [{ url: ogImageUrl }] : undefined,
+    },
+    twitter: {
+      title: seo?.twitterTitle || title,
+      description: seo?.twitterDescription || description,
+      images: twitterImageUrl ? [twitterImageUrl] : undefined,
+      card: "summary_large_image",
+    },
+  };
+}
 
 export default async function HomePage() {
   const homepageData = await fetchHomepageData();
@@ -105,14 +186,15 @@ export default async function HomePage() {
       section?.__component === "section.case-study",
   );
   const partnerSection = textMediaSections?.[1];
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.NEXT_PUBLIC_FRONTEND_BASE_URL ||
-    "http://localhost:3000";
+  const baseUrl = getBaseUrl();
+  const structuredData = page?.seo?.structuredData;
 
   return (
     <main>
-      {/* <JsonLd
+      {structuredData ? (
+        <JsonLd id="jsonld-page" data={structuredData} />
+      ) : null}
+      <JsonLd
         id="jsonld-website"
         data={{
           "@context": "https://schema.org",
@@ -129,19 +211,7 @@ export default async function HomePage() {
           name: "TheEmmesGroup",
           url: baseUrl,
         }}
-      /> */}
-      {/* <JsonLd
-        id="jsonld-faq"
-        data={{
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: faqItems.map((item) => ({
-            "@type": "Question",
-            name: item.q,
-            acceptedAnswer: { "@type": "Answer", text: item.a },
-          })),
-        }} */}
-      {/* /> */}
+      />
 
       <Hero section={heroSection as any} />
       <TruthSection section={truthSection as any} />

@@ -7,12 +7,21 @@ import { RiLinkedinFill, RiTwitterXLine } from "react-icons/ri";
 import { useNavigation } from "@/hooks/useNavigation";
 import Link from "next/link";
 import { useSiteConfig, getImageUrl } from "@/hooks/useSiteConfig";
+import { useEffect, useState } from "react";
 
 export default function SiteFooter() {
   const { data: footerColumns = [] } = useNavigation('footer');
   const { data: siteConfig } = useSiteConfig();
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  const footer = siteConfig?.footer;
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  const safeFooterColumns = isHydrated ? footerColumns : [];
+  const safeSiteConfig = isHydrated ? siteConfig : null;
+
+  const footer = safeSiteConfig?.footer;
   const ctaTitle = footer?.cta_title;
   const ctaDescription = footer?.cta_description;
   const ctaButton = footer?.cta_button;
@@ -37,7 +46,7 @@ export default function SiteFooter() {
     return undefined;
   };
 
-  const siteName = siteConfig?.site_name || "Emmes Group";
+  const siteName = safeSiteConfig?.site_name || "Emmes Group";
   const newsletterIconUrl = resolveIconUrl(newsletterCta?.icon);
 
   const renderButton = (
@@ -172,7 +181,7 @@ export default function SiteFooter() {
                   </div>
                 ) : null}
                 <div className="grid gap-6 text-sm text-[#2a3f7a]/80 sm:grid-cols-3">
-                  {footerColumns.map((column) => (
+                  {safeFooterColumns.map((column) => (
                     <div key={column.id} className="space-y-2">
                       {/* Column Header handled conceptually or hidden if empty path? 
                            Based on design, the top level items (Company, etc) might be headers?

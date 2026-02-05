@@ -39,9 +39,7 @@ const metadataBase = (() => {
 })();
 
 export async function generateMetadata(): Promise<Metadata> {
-  console.log('generateMetadata called')
   const siteConfig = await getSiteConfig();
-  console.log('siteConfig gello', siteConfig)
   const siteName = siteConfig?.site_name || "TheEmmesGroup";
   const title = siteConfig?.meta_title || siteName;
   const extractText = (value: unknown) => {
@@ -112,4 +110,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-

@@ -124,7 +124,18 @@ export const PageSchema = z
     hero_section: z.array(DynamicZoneItemSchema).optional(),
     seo: z
       .object({
-        id: z.number().optional(),
+        metaTitle: z.string().nullable().optional(),
+        metaDescription: z.string().nullable().optional(),
+        metaKeywords: z.string().nullable().optional(),
+        canonicalURL: z.string().nullable().optional(),
+        metaRobots: z.string().nullable().optional(),
+        ogTitle: z.string().nullable().optional(),
+        ogDescription: z.string().nullable().optional(),
+        ogImage: MediaSingleSchema.optional(),
+        twitterTitle: z.string().nullable().optional(),
+        twitterDescription: z.string().nullable().optional(),
+        twitterImage: MediaSingleSchema.optional(),
+        structuredData: z.unknown().nullable().optional(),
       })
       .passthrough()
       .optional(),

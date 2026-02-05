@@ -5,6 +5,7 @@ import Logo from "@/components/Logo";
 import Wrapper from "@/components/Wrappers";
 import { useNavigation } from "@/hooks/useNavigation";
 import { useSiteConfig, getImageUrl } from "@/hooks/useSiteConfig";
+import { useEffect, useState } from "react";
 
 function ChevronDownIcon({ className = "" }: { className?: string }) {
   return (
@@ -55,13 +56,18 @@ function SearchIcon({ className = "" }: { className?: string }) {
 export default function SiteHeader() {
   const { data: topNavItems = [] } = useNavigation("top");
   const { data: primaryNavItems = [] } = useNavigation("primary");
-  console.log('topNavItems', topNavItems)
-  console.log('primaryNavItems', primaryNavItems)
   const { data: siteConfig } = useSiteConfig();
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  console.log('siteConfig header', siteConfig)
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
-  const logoUrl = getImageUrl(siteConfig?.logo?.url);
+  const safeTopNavItems = isHydrated ? topNavItems : [];
+  const safePrimaryNavItems = isHydrated ? primaryNavItems : [];
+  const safeSiteConfig = isHydrated ? siteConfig : null;
+
+  const logoUrl = getImageUrl(safeSiteConfig?.logo?.url);
 
   return (
     <header className="">
@@ -70,7 +76,7 @@ export default function SiteHeader() {
         <Wrapper as="div" className="relative flex flex-col gap-2 py-4">
           <div className="flex items-center justify-end">
             <nav className="emmes-nav-top hidden items-center gap-6 lg:flex">
-              {topNavItems.map((item, index) => (
+              {safeTopNavItems.map((item, index) => (
                 <Link
                   key={item.id ?? index}
                   href={item.href}
@@ -94,7 +100,7 @@ export default function SiteHeader() {
               </summary>
               <div className="absolute right-0 mt-3 w-64 rounded-lg border border-white/20 bg-white p-3 shadow-lg">
                 <nav className="flex flex-col gap-1 text-sm text-slate-900">
-                  {topNavItems.map((item, index) => (
+                  {safeTopNavItems.map((item, index) => (
                     <Link
                       key={item.id ?? index}
                       href={item.href}
@@ -104,7 +110,7 @@ export default function SiteHeader() {
                     </Link>
                   ))}
                   <div className="my-2 h-px bg-slate-200" />
-                  {primaryNavItems.map((item, index) => (
+                  {safePrimaryNavItems.map((item, index) => (
                     <Link
                       key={item.id ?? index}
                       href={item.href}
@@ -122,11 +128,11 @@ export default function SiteHeader() {
             <Logo
               className="h-10 md:h-12"
               src={logoUrl}
-              width={siteConfig?.logo?.width}
-              height={siteConfig?.logo?.height}
+              width={safeSiteConfig?.logo?.width}
+              height={safeSiteConfig?.logo?.height}
             />
             <nav className="emmes-nav-primary hidden items-center justify-end gap-8 pb-2 lg:flex">
-              {primaryNavItems.map((item, index) => (
+              {safePrimaryNavItems.map((item, index) => (
                 <Link
                   key={item.id ?? index}
                   href={item.href}

@@ -9,7 +9,6 @@ import {
 
 export const fetchSiteConfig = async (): Promise<SiteConfig | null> => {
   try {
-    console.log('fetchSiteConfig called')
     const queryString = qs.stringify(
       {
         populate: {
@@ -31,12 +30,8 @@ export const fetchSiteConfig = async (): Promise<SiteConfig | null> => {
       { encodeValuesOnly: true },
 
     );
-    console.log('queryString', queryString)
-    console.log('apiClient', await apiClient.get(`/api/site-config?${queryString}`))
     const { data } = await apiClient.get(`/api/site-config?${queryString}`);
-    console.log('data show is here site config', data)
     const parsed = SiteConfigResponseSchema.safeParse(data.data);
-    console.log('parsed', parsed)
     if (!parsed.success) {
       const fallback = (data as { data?: unknown })?.data ?? null;
       const fallbackParsed = SiteConfigSchema.safeParse(fallback);

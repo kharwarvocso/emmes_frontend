@@ -45,14 +45,13 @@ const resolveArray = <T,>(value?: T[] | { data?: T[] } | null): T[] => {
 const resolveMediaUrl = (media?: MediaItem) =>
   getImageUrl(
     media?.url ||
-      media?.formats?.large?.url ||
-      media?.formats?.medium?.url ||
-      media?.formats?.small?.url ||
-      media?.formats?.thumbnail?.url,
+    media?.formats?.large?.url ||
+    media?.formats?.medium?.url ||
+    media?.formats?.small?.url ||
+    media?.formats?.thumbnail?.url,
   );
 
 const isVideoMedia = (media?: MediaItem, url?: string) => {
-  console.log("isVideoMedia check:", { media, url });
   const mediaUrl = url || resolveMediaUrl(media);
   if (!mediaUrl) return false;
   return (
@@ -179,9 +178,8 @@ export default function ResourceCenter({
         <div className={showFeaturedCard ? "grid gap-6 lg:grid-cols-[1.15fr_2fr]" : "grid gap-6"}>
           {showFeaturedCard ? (
             <article
-              className={`relative flex h-full min-h-[620px] flex-col justify-between overflow-hidden rounded-3xl p-7 text-white shadow-[0_24px_60px_rgba(2,12,32,0.35)] ${
-                featureBgUrl ? "" : "bg-[#0b66ff]"
-              }`}
+              className={`relative flex h-full min-h-[620px] flex-col justify-between overflow-hidden rounded-3xl p-7 text-white shadow-[0_24px_60px_rgba(2,12,32,0.35)] ${featureBgUrl ? "" : "bg-[#0b66ff]"
+                }`}
             >
               {featureBgUrl ? (
                 <div className="absolute inset-0">
@@ -228,9 +226,9 @@ export default function ResourceCenter({
                         <Image
                           src={featuredButtonIconUrl}
                           alt=""
-                          width={16}
-                          height={16}
-                          className="h-4 w-4"
+                          width={28}
+                          height={28}
+                          
                           aria-hidden="true"
                           unoptimized
                         />
@@ -241,15 +239,15 @@ export default function ResourceCenter({
                           <Image
                             src={featuredButtonIconUrl}
                             alt=""
-                            width={16}
-                            height={16}
-                            className="h-4 w-4"
+                            width={28}
+                            height={28}
+                            
                             aria-hidden="true"
                             unoptimized
                           />
                         ) : null
                       ) : (
-                        <HiArrowRight className="h-4 w-4" aria-hidden="true" />
+                        <HiArrowRight  aria-hidden="true" />
                       )}
                     </Link>
                   ) : (
@@ -258,9 +256,9 @@ export default function ResourceCenter({
                         <Image
                           src={featuredButtonIconUrl}
                           alt=""
-                          width={16}
-                          height={16}
-                          className="h-4 w-4"
+                          width={28}
+                          height={28}
+                          
                           aria-hidden="true"
                           unoptimized
                         />
@@ -271,15 +269,15 @@ export default function ResourceCenter({
                           <Image
                             src={featuredButtonIconUrl}
                             alt=""
-                            width={16}
-                            height={16}
-                            className="h-4 w-4"
+                            width={28}
+                            height={28}
+                            
                             aria-hidden="true"
                             unoptimized
                           />
                         ) : null
                       ) : (
-                        <HiArrowRight className="h-4 w-4" aria-hidden="true" />
+                        <HiArrowRight  aria-hidden="true" />
                       )}
                     </button>
                   )
@@ -297,9 +295,9 @@ export default function ResourceCenter({
                     <Image
                       src={commonButtonIconUrl}
                       alt=""
-                      width={16}
-                      height={16}
-                      className="h-4 w-4"
+                      width={28}
+                      height={28}
+                      
                       aria-hidden="true"
                       unoptimized
                     />
@@ -310,15 +308,15 @@ export default function ResourceCenter({
                       <Image
                         src={commonButtonIconUrl}
                         alt=""
-                        width={16}
-                        height={16}
-                        className="h-4 w-4"
+                        width={28}
+                        height={28}
+                        
                         aria-hidden="true"
                         unoptimized
                       />
                     ) : null
                   ) : (
-                    <HiArrowRight className="h-4 w-4" aria-hidden="true" />
+                    <HiArrowRight  aria-hidden="true" />
                   )}
                 </>
               ) : null;

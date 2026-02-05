@@ -33,8 +33,6 @@ const fetchNavigation = async (type: NavigationType): Promise<FormattedNavItem[]
         const { data } = await apiClient.get<NavItem[]>(
             `/api/navigation/render/${id}`
         );
-        console.log(`nav items data show is here for ${type}`, data);
-
         // For footer, we need to reconstruct the hierarchy
         if (type === 'footer') {
             const itemsMap = new Map<number, FormattedNavItem & { parentId?: number }>();

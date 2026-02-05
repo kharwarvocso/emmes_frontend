@@ -16,9 +16,7 @@ const getStrapiBaseUrl = () =>
 
 export const getSiteConfig = async (): Promise<SiteConfig | null> => {
   const baseUrl = getStrapiBaseUrl();
-  console.log('baseUrhaskdh fgasdl', baseUrl)
   if (!baseUrl) return null;
-  console.log('baseUrl enter', baseUrl)
 
   const queryString = qs.stringify(
     {
@@ -40,9 +38,7 @@ export const getSiteConfig = async (): Promise<SiteConfig | null> => {
     },
     { encodeValuesOnly: true },
   );
-  console.log('queryString', queryString)
   const url = new URL(`/api/site-config?${queryString}`, baseUrl);
-  console.log('url', url)
 
   const token = Env.STRAPI_ADMIN_TOKEN || Env.NEXT_PUBLIC_STRAPI_READONLY_TOKEN;
   const res = await fetch(url.toString(), {

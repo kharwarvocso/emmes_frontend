@@ -25,10 +25,6 @@ export default function Logo({
   const resolvedWidth = width && width > 0 ? width : 244;
   const resolvedHeight = height && height > 0 ? height : 84;
 
-  console.log("Logo component - resolvedSrc:", resolvedSrc);
-  console.log("Logo component - isRemote:", isRemote);
-
-
   return (
     <Link href="/" className="flex cursor-pointer items-center gap-2">
       <Image
