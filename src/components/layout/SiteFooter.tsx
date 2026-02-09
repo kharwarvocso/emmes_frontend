@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 
 export default function SiteFooter() {
   const { data: footerColumns = [] } = useNavigation('footer');
+  const { data: bottomFooterItems = [] } = useNavigation('bottom_footer');
   const { data: siteConfig } = useSiteConfig();
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -19,6 +20,7 @@ export default function SiteFooter() {
   }, []);
 
   const safeFooterColumns = isHydrated ? footerColumns : [];
+  const safeBottomFooterItems = isHydrated ? bottomFooterItems : [];
   const safeSiteConfig = isHydrated ? siteConfig : null;
 
   const footer = safeSiteConfig?.footer;
@@ -212,15 +214,29 @@ export default function SiteFooter() {
           <div className="pt-6">
             <div className="flex flex-col gap-4 text-xs text-[#2a3f7a]/80 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-2 text-[#1d3173]">
-                <span className="text-lg font-semibold">{siteName}</span>
-                <span>(c) {new Date().getFullYear()}</span>
+                {safeBottomFooterItems.find(item => item.label.toLowerCase().includes('copyright')) ? (
+                  <span className="text-lg font-semibold">
+                    {safeBottomFooterItems.find(item => item.label.toLowerCase().includes('copyright'))?.label}
+                  </span>
+                ) : (
+                  <>
+                    <span className="text-lg font-semibold">{siteName}</span>
+                    <span>(c) {new Date().getFullYear()}</span>
+                  </>
+                )}
               </div>
               <div className="flex flex-wrap items-center gap-4">
-                <span>External Privacy Notice</span>
-                <span>FOCI</span>
-                <span>Emmes EU-U.S. Data Privacy Framework</span>
-                <span>Purchasing Terms & Conditions</span>
-                <span>ISO Certification</span>
+                {safeBottomFooterItems
+                  .filter(item => !item.label.toLowerCase().includes('copyright'))
+                  .map((item) => (
+                    item.href ? (
+                      <Link key={item.id} href={item.href} className="hover:text-[#0b66ff] transition-colors">
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <span key={item.id}>{item.label}</span>
+                    )
+                  ))}
               </div>
               <div className="flex items-center gap-3 text-[#1d3173]">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#7b88a8]/50">

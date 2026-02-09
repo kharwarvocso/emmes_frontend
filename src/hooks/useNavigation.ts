@@ -23,6 +23,7 @@ const NAVIGATION_IDS = {
     top: "tl0q2viihldmn1tlwdi1050h",
     primary: "vnutr2ypgtiti2wbp72swi0v",
     footer: "tmpi40kmrciwbohfgm1y19mq",
+    bottom_footer: "qaaltr1f9x0tkgpl6jhzazpy",
 };
 
 type NavigationType = keyof typeof NAVIGATION_IDS;
@@ -90,6 +91,8 @@ const fetchNavigation = async (type: NavigationType): Promise<FormattedNavItem[]
             return [
                 { id: 13, href: "", label: "Company", items: [{ id: 14, href: "", label: "History" }, { id: 15, href: "", label: "Leadership" }] }
             ]
+        } else if (type === 'bottom_footer') {
+            return [];
         }
 
         return [
