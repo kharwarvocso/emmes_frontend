@@ -49,18 +49,11 @@
 
 
 import type { Metadata } from "next";
-import Hero from "@/components/landing/Hero";
-import TruthSection from "@/components/landing/TruthSection";
-import ResourceCenter from "@/components/landing/ResourceCenter";
-import StatsSection from "@/components/landing/StatsSection";
-import PartnerSection from "@/components/landing/PartnerSection";
-import LeadershipSection from "@/components/landing/LeadershipSection";
-import SolutionsSection from "@/components/landing/SolutionsSection";
-import CasesSection from "@/components/landing/CasesSection";
 import { fetchHomepageData } from "./query";
 import { getOfferings, getTestimonials } from "@/lib/strapi/queries";
 import { getImageUrl } from "@/lib/strapi/utils";
 import JsonLd from "@/components/seo/JsonLd";
+import PageRenderer from "../_common/PageRenderer";
 
 export const revalidate = 0;
 
@@ -93,10 +86,10 @@ const resolveMediaUrl = (value?: unknown) => {
     };
     return getImageUrl(
       media.url ||
-        media.formats?.large?.url ||
-        media.formats?.medium?.url ||
-        media.formats?.small?.url ||
-        media.formats?.thumbnail?.url,
+      media.formats?.large?.url ||
+      media.formats?.medium?.url ||
+      media.formats?.small?.url ||
+      media.formats?.thumbnail?.url,
     );
   }
   if (typeof value === "object" && value !== null && "data" in value) {
@@ -155,39 +148,23 @@ export default async function HomePage() {
   const testimonials = await getTestimonials();
   const offerings = await getOfferings();
   const page = homepageData?.data?.[0];
-
-  const heroSection = page?.hero_section?.find(
-    (section: { __component?: string }) =>
-      section?.__component === "section.hero-section",
-  );
-  const textMediaSections = page?.hero_section?.filter(
-    (section: { __component?: string }) =>
-      section?.__component === "section.text-media-section",
-  );
-  const truthSection = textMediaSections?.[0];
-  const resourceCenterSection = page?.hero_section?.find(
-    (section: { __component?: string }) =>
-      section?.__component === "section.blog-card-section",
-  );
-  const metrixSection = page?.hero_section?.find(
-    (section: { __component?: string }) =>
-      section?.__component === "section.metrix",
-  );
-  const servicesSection = page?.hero_section?.find(
-    (section: { __component?: string }) =>
-      section?.__component === "section.services-section",
-  );
-  const memberSection = page?.hero_section?.find(
-    (section: { __component?: string }) =>
-      section?.__component === "section.memeber-section",
-  );
-  const caseStudySection = page?.hero_section?.find(
-    (section: { __component?: string }) =>
-      section?.__component === "section.case-study",
-  );
-  const partnerSection = textMediaSections?.[1];
   const baseUrl = getBaseUrl();
   const structuredData = page?.seo?.structuredData;
+
+  // The 'hero_section' field in Strapi seems to contain the dynamic zone for all sections
+  // specific components were previously hardcoded, so we provide a fallback layout if data is missing
+  const defaultSections = [
+    { __component: "section.hero-section" },
+    { __component: "section.text-media-section" }, // Defaults to TruthSection
+    { __component: "section.metrix" }, // Hides if empty
+    { __component: "section.memeber-section" },
+    { __component: "section.services-section" },
+    { __component: "section.case-study" }, // Hides if empty
+  ];
+
+  const sections = (page?.hero_section && page.hero_section.length > 0)
+    ? page.hero_section
+    : defaultSections;
 
   return (
     <main>
@@ -213,14 +190,11 @@ export default async function HomePage() {
         }}
       />
 
-      <Hero section={heroSection as any} />
-      <TruthSection section={truthSection as any} />
-      <ResourceCenter section={resourceCenterSection as any} />
-      <StatsSection section={metrixSection as any} />
-      <PartnerSection section={partnerSection as any} />
-      <LeadershipSection section={memberSection as any} leaders={testimonials} />
-      <SolutionsSection section={servicesSection as any} offerings={offerings} />
-      <CasesSection section={caseStudySection as any} />
+      <PageRenderer
+        sections={sections}
+        testimonials={testimonials}
+        offerings={offerings}
+      />
     </main>
   );
 }
