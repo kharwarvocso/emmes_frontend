@@ -68,7 +68,7 @@ export const SiteConfigSchema = z
         MediaSingleSchema,
       )
       .optional(),
-    og_image: z
+    footer_logo: z
       .preprocess(
         (val) =>
           typeof val === "object" && val !== null && "data" in (val as object)

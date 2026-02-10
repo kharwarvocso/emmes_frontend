@@ -14,7 +14,7 @@ export const fetchSiteConfig = async (): Promise<SiteConfig | null> => {
         populate: {
           logo: true,
           favicon: true,
-          og_image: true,
+          footer_logo: true,
           footer: {
             populate: {
               cta_button: {

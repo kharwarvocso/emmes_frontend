@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Logo from "@/components/Logo";
 import Wrapper from "@/components/Wrappers";
 import { HiArrowLongRight } from "react-icons/hi2";
 import { RiLinkedinFill, RiTwitterXLine } from "react-icons/ri";
@@ -214,13 +215,18 @@ export default function SiteFooter() {
           <div className="pt-6">
             <div className="flex flex-col gap-4 text-xs text-[#2a3f7a]/80 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-2 text-[#1d3173]">
+                <Logo
+                  className="h-8 w-auto"
+                  src={getImageUrl((safeSiteConfig?.footer_logo as { url?: string })?.url)}
+                  width={(safeSiteConfig?.footer_logo as { width?: number })?.width}
+                  height={(safeSiteConfig?.footer_logo as { height?: number })?.height}
+                />
                 {safeBottomFooterItems.find(item => item.label.toLowerCase().includes('copyright')) ? (
                   <span className="text-lg font-semibold">
                     {safeBottomFooterItems.find(item => item.label.toLowerCase().includes('copyright'))?.label}
                   </span>
                 ) : (
                   <>
-                    <span className="text-lg font-semibold">{siteName}</span>
                     <span>(c) {new Date().getFullYear()}</span>
                   </>
                 )}
