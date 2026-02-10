@@ -28,11 +28,11 @@ const ScrollToTopButton = () => {
   return (
     <Portal>
       <button
-        className="fixed bottom-20 right-5 z-[999999] rounded-full border border-white bg-bg1 bg-opacity-80 p-3 duration-300 hover:bg-opacity-100 md:right-10"
+        className="fixed bottom-20 right-5 z-[999999] rounded-full border border-sky-200 bg-sky-50 p-3 text-sky-700 duration-300 hover:bg-sky-100 md:right-10"
         onClick={scrollToTop}
         style={{ display: isVisible ? "block" : "none" }}
       >
-        <FaArrowUp className="text-white" />
+        <FaArrowUp className="text-sky-700" />
       </button>
     </Portal>
   );

@@ -1,0 +1,26 @@
+<svg width="1400" height="900" viewBox="0 0 1400 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7efe4" />
+      <stop offset="55%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e6eef4" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b08968" />
+      <stop offset="100%" stop-color="#7f5539" />
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="900" rx="48" fill="url(#bg)" />
+  <circle cx="1120" cy="180" r="140" fill="#f2d3b1" opacity="0.55" />
+  <circle cx="280" cy="680" r="180" fill="#cfe2ed" opacity="0.6" />
+  <path d="M140 250C320 120 520 140 700 260C880 380 1080 380 1260 250" stroke="#1f2933" stroke-opacity="0.12" stroke-width="28" stroke-linecap="round" />
+  <rect x="220" y="320" width="540" height="340" rx="28" fill="#ffffff" opacity="0.9" />
+  <rect x="260" y="360" width="460" height="28" rx="14" fill="#e9dccf" />
+  <rect x="260" y="410" width="380" height="20" rx="10" fill="#f1e8df" />
+  <rect x="260" y="450" width="420" height="18" rx="9" fill="#f1e8df" />
+  <rect x="260" y="520" width="300" height="16" rx="8" fill="#e6edf3" />
+  <rect x="260" y="550" width="260" height="16" rx="8" fill="#e6edf3" />
+  <rect x="820" y="420" width="320" height="280" rx="24" fill="url(#accent)" opacity="0.9" />
+  <rect x="860" y="460" width="240" height="22" rx="11" fill="#f9f5f0" opacity="0.9" />
+  <rect x="860" y="500" width="200" height="18" rx="9" fill="#f4ede5" opacity="0.85" />
+</svg>

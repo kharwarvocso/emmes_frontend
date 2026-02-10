@@ -17,7 +17,7 @@ export default function Search({ handleSearchModal }: { handleSearchModal: () =>
       <div className="fixed inset-0 z-[9998] bg-black/50" onClick={handleSearchModal} />
       <div className="fixed inset-0 z-[9999] flex items-start justify-center px-4 pt-24">
         <div
-          className="w-full max-w-xl rounded-lg bg-white p-6 shadow-xl"
+          className="w-full max-w-xl rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl"
           role="dialog"
           aria-modal="true"
           onClick={(event) => event.stopPropagation()}
@@ -31,10 +31,10 @@ export default function Search({ handleSearchModal }: { handleSearchModal: () =>
           <input
             autoFocus
             type="text"
-            placeholder="Search the site"
-            className="mt-4 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none"
+            placeholder="Search the blog"
+            className="mt-4 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-100"
           />
-          <p className="mt-3 text-xs text-zinc-500">Hook this input to your search API when ready.</p>
+          <p className="mt-3 text-xs text-zinc-500">Hook this input to your blog search API when ready.</p>
         </div>
       </div>
     </Portal>

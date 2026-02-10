@@ -23,7 +23,7 @@ export default function Wrapper({
   isTop2 = false,
   children,
   className = "",
-  isMaxWidthChangeRequired = "max-w-screen-2xl",
+  isMaxWidthChangeRequired = "",
   as: Component = "section",
   bgImage,
   ...props
@@ -34,8 +34,7 @@ export default function Wrapper({
         "w-full px-3 xl:px-5",
         bgColor,
         containerClassName,
-        "font-inter",
-        isTop && "pt-18 md:pt-36",
+        isTop && "pt-16 md:pt-20",
         isTop2 && "pt-20",
         bgImage && "relative overflow-hidden",
       )}

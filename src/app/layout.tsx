@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Merriweather } from "next/font/google";
+import { Fraunces, Manrope } from "next/font/google";
 import "./css/globals.css";
 import "./css/swiper.css";
 import "./css/humMenu.css";
@@ -7,29 +7,25 @@ import Providers from "@/providers/Providers";
 import { Toaster } from "sonner";
 import { ViewTransitions } from "next-view-transitions";
 import Layout from "@/components/layout/Layout";
+import Script from "next/script";
 
-const inter = Inter({
-  variable: "--font-inter",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-const merriWeather = Merriweather({
-  variable: "--font-merriweather",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
-  weight: ["400", "700"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 const metadataBase = (() => {
   try {
-    const base =
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      process.env.NEXT_PUBLIC_FRONTEND_BASE_URL ||
-      "http://localhost:3000";
+    const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
     return new URL(base);
   } catch {
     return undefined;
@@ -39,36 +35,45 @@ const metadataBase = (() => {
 export const metadata: Metadata = {
   metadataBase,
   title: {
-    default: "TheEmmesGroup",
-    template: "%s | TheEmmesGroup",
+    default: "Blog",
+    template: "%s | Blog",
   },
   description:
-    "Fraud prevention, cyber threat protection, and security solutions for individuals and businesses.",
+    "Thoughtful writing on building, design, and the web.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "TheEmmesGroup",
+    title: "Blog",
     type: "website",
     locale: "en_US",
-    siteName: "TheEmmesGroup",
+    siteName: "Blog",
     description:
-      "Fraud prevention, cyber threat protection, and security solutions for individuals and businesses.",
+      "Thoughtful writing on building, design, and the web.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "TheEmmesGroup",
+    title: "Blog",
     description:
-      "Fraud prevention, cyber threat protection, and security solutions for individuals and businesses.",
+      "Thoughtful writing on building, design, and the web.",
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${merriWeather.variable} relative scroll-smooth antialiased`}
+        className={`${manrope.variable} ${fraunces.variable} relative scroll-smooth antialiased font-sans`}
       >
+        {adsenseClient ? (
+          <Script
+            strategy="afterInteractive"
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+            crossOrigin="anonymous"
+          />
+        ) : null}
         <ViewTransitions>
           <Layout>
             <Providers>{children}</Providers>

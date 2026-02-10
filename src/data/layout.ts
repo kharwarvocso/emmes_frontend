@@ -1,25 +1,12 @@
 export const header = {
-  upperNav: [
-    { id: 1, label: "Call us", url: "tel:+10000000000", icon: null },
-    { id: 2, label: "Email", url: "mailto:hello@example.com", icon: null },
-  ],
+  upperNav: [],
   middleNav: [
     { id: "home", label: "Home", href: "/" },
+    { id: "blog", label: "Blog", href: "/blog" },
     { id: "about", label: "About", href: "/about" },
     { id: "contact", label: "Contact", href: "/contact" },
   ],
-  lowerNav: [
-    {
-      id: "services",
-      label: "Services",
-      href: "/services",
-      subNav: [
-        { id: "security", label: "Security", href: "/services/security" },
-        { id: "consulting", label: "Consulting", href: "/services/consulting" },
-      ],
-    },
-    { id: "pricing", label: "Pricing", href: "/pricing" },
-  ],
+  lowerNav: [],
 };
 
 export const header2 = {
@@ -28,11 +15,12 @@ export const header2 = {
 };
 
 export const footer = {
-  text: "A starter template footer area. Replace this text with your company summary from Strapi.",
+  text: "A blog about thoughtful building, writing, and creativity. Replace this with your Strapi global settings.",
   list1: {
-    title: "Quick Links",
+    title: "Explore",
     links: [
       { label: "Home", href: "/" },
+      { label: "Blog", href: "/blog" },
       { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
     ],

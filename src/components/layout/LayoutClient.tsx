@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Search from "./Search";
+import SearchMega from "./SearchMega";
 import Sidebar from "./Sidebar";
 import Footer from "./header/Footer";
 import Header from "./header/Header";
 import ScrollToTopButton from "../ScrollToTopButton";
+import StickyFooterAd from "@/components/ads/StickyFooterAd";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function LayoutClient({
@@ -34,6 +36,7 @@ export default function LayoutClient({
 
   const [isSidebar, setSidebar] = useState(false);
   const [isSearchModal, setIsSearchModal] = useState<boolean>(false);
+  const [isSearchMenuOpen, setIsSearchMenuOpen] = useState<boolean>(false);
 
   const controlNavbar = () => {
     if (typeof window === "undefined") return;
@@ -86,6 +89,19 @@ export default function LayoutClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsSearchMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(() => {
+    setIsSearchMenuOpen(false);
+  }, [pathname]);
+
   // useEffect(() => {
   //   import("@/components/elements/AuthSliderModel/AuthSlider");
   // }, []);
@@ -102,6 +118,24 @@ export default function LayoutClient({
     if (href) router.push(href);
   };
 
+  const handleSearchToggle = () => {
+    if (typeof window === "undefined") return;
+    const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+    if (isDesktop) {
+      setIsSearchMenuOpen((prev) => !prev);
+      setIsSearchModal(false);
+      return;
+    }
+    setIsSearchModal((prev) => !prev);
+  };
+
+  const openSearchModal = () => {
+    setIsSearchModal(true);
+    setIsSearchMenuOpen(false);
+  };
+
+  const closeSearchMenu = () => setIsSearchMenuOpen(false);
+
   return (
     <>
       {headerStyle == 1 && (
@@ -113,9 +147,10 @@ export default function LayoutClient({
           upperNavItems={upperNavItems}
           middleNavItems={middleNavItems}
           lowerNavItems={lowerNavItems}
+          socialLinks={footerData?.socials}
           activeItemId={activeItemId}
           handleNavItemClick={handleNavItemClick}
-          handleSearchModal={() => setIsSearchModal((pre) => !pre)}
+          handleSearchModal={handleSearchToggle}
           handleSidebar={() => setSidebar((pre) => !pre)}
         />
       )}
@@ -128,17 +163,25 @@ export default function LayoutClient({
           upperNavItems={upperNavItems2}
           middleNavItems={middleNavItems}
           lowerNavItems={lowerNavItems}
+          socialLinks={footerData?.socials}
           activeItemId={activeItemId}
           handleNavItemClick={handleNavItemClick}
-          handleSearchModal={() => setIsSearchModal((pre) => !pre)}
+          handleSearchModal={handleSearchToggle}
           handleSidebar={() => setSidebar((pre) => !pre)}
         />
+      )}
+      {isSearchMenuOpen && (
+        <>
+          <div className="fixed inset-0 z-30 hidden md:block" onClick={closeSearchMenu} />
+          <SearchMega onClose={closeSearchMenu} onOpenModal={openSearchModal} />
+        </>
       )}
       {isSearchModal && <Search handleSearchModal={() => setIsSearchModal(false)} />}
       <main className="min-h-screen">{children}</main>
       {footerStyle == 1 && <Footer footerData={footerData} />}
       {isSidebar && <Sidebar isSidebar={isSidebar} handleSidebar={() => setSidebar((pre) => !pre)} />}
       <ScrollToTopButton />
+      <StickyFooterAd />
     </>
   );
 }
